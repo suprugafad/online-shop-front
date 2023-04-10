@@ -10,7 +10,7 @@ import { LinkItem, OauthMuiLink } from './SignIn';
 import axios from "axios";
 
 const signupSchema = object({
-  name: string().min(1, 'Name is required').max(70),
+  username: string().min(1, 'Name is required').max(70),
   email: string().min(1, 'Email is required').email('Email is invalid'),
   password: string()
     .min(1, 'Password is required')
@@ -26,7 +26,7 @@ type ISignUp = TypeOf<typeof signupSchema>;
 
 const SignUpPage: FC = () => {
   const defaultValues: ISignUp = {
-    name: '',
+    username: '',
     email: '',
     password: '',
     passwordConfirm: '',
@@ -39,7 +39,7 @@ const SignUpPage: FC = () => {
 
   const onSubmitHandler: SubmitHandler<ISignUp> = async (values: ISignUp) => {
     try {
-      await axios.post('/api/auth/register', values, { withCredentials: true });
+      await axios.post('http://localhost:5000/api/auth/register', values, { withCredentials: true });
       console.log('User was created successfully');
     } catch (error) {
       console.error(error);
@@ -117,9 +117,9 @@ const SignUpPage: FC = () => {
                     </Typography>
 
                     <FormInput
-                      label='Name'
+                      label='Username'
                       type='text'
-                      name='name'
+                      name='username'
                       focused
                       required
                     />
