@@ -44,6 +44,12 @@ const SignUpPage: FC = () => {
     } catch (error) {
       console.error(error);
       console.log('Error creating user');
+      if ((error as any).response && (error as any).response.data === 'User with this email already exists') {
+        methods.setError('email', {
+          type: 'manual',
+          message: 'User with this email already exists',
+        });
+      }
     }
   };
 
