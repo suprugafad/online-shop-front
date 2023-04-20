@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import {
-  Box,
+  Box, Button,
   Checkbox,
   FormControl,
   FormControlLabel,
@@ -69,7 +69,6 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({ filters, onFilte
     setSelectedCategories(
       checked ? [...selectedCategories, name] : selectedCategories.filter((category) => category !== name),
     );
-    onFilterChange({ ...filters, categories: selectedCategories });
   };
 
   const handleManufacturerChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -77,13 +76,10 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({ filters, onFilte
     setSelectedManufacturers(
       checked ? [...selectedManufacturers, name] : selectedManufacturers.filter((manufacturer) => manufacturer !== name),
     );
-    onFilterChange({ ...filters, manufacturers: selectedManufacturers });
   };
 
   const handlePriceRangeChange = async (event: Event, newValue: number | number[]) => {
     setPriceRange(newValue as number[]);
-    const [minPrice, maxPrice] = newValue as number[];
-    onFilterChange({ ...filters, priceRange: [minPrice, maxPrice] });
   };
 
   const handleApplyFilters = () => {
@@ -98,7 +94,7 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({ filters, onFilte
   };
 
   return (
-    <Box>
+    <Box style={{ width: '275px'}}>
       <Box my={2}>
         <FormControl component="fieldset">
           <FormLabel component="legend">Categories</FormLabel>
@@ -142,6 +138,14 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({ filters, onFilte
         <Box display="flex" justifyContent="space-between">
           <TextField label="Min cost" value={priceRange[0]} type="number" InputProps={{ inputProps: { min: 0, max: 1000 } }} />
           <TextField label="Max cost" value={priceRange[1]} type="number" InputProps={{ inputProps: { min: 0, max: 1000 } }} />
+        </Box>
+        <Box my={2}>
+          <Button variant="contained" color="primary" onClick={handleApplyFilters}>
+            Apply Filters
+          </Button>
+          <Button variant="outlined" color="secondary" onClick={handleResetFilters} style={{ marginLeft: '1rem' }}>
+            Reset Filters
+          </Button>
         </Box>
       </Box>
     </Box>

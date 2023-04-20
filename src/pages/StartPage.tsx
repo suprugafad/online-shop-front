@@ -11,13 +11,11 @@ interface Filters {
 }
 
 const StartPage = () => {
-  const [priceRange, setPriceRange] = useState<number[]>([0, 1000]);
+  const [filter, setFilter] = useState<Filters>({ categories: [], manufacturers: [], priceRange:[0, 1000] });
 
   const handleFilterChange = (filters: Filters) => {
-    setPriceRange(filters.priceRange);
+    setFilter(filters);
   };
-
-
 
   return (
     <>
@@ -28,7 +26,7 @@ const StartPage = () => {
         width: '100%',
         height: '100%',
       }}>
-        <div style={{ marginLeft: "5rem", width: '300px', marginTop:'3rem' }}>
+        <div style={{ marginLeft: "5rem", width: '330px', marginTop:'3rem' }}>
           <ProductFilters
             filters={{
               categories: [],
@@ -38,7 +36,7 @@ const StartPage = () => {
             onFilterChange={handleFilterChange}
           />
         </div>
-        <ProductCatalog priceRange={priceRange}/>
+        <ProductCatalog filters={filter}/>
       </div>
       <Footer />
     </>
