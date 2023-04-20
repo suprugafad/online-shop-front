@@ -1,66 +1,27 @@
 import React, {FormEvent, useEffect, useState} from "react";
 import {
-  TextField,
-  Button,
-  IconButton,
-  FormControlLabel,
-  Checkbox,
-  FormControl,
-  FormLabel, FormGroup
+  TextField, Button, FormControlLabel, Checkbox, FormControl,
+  FormLabel, Box, Input, IconButton, Grid, Container, FormGroup
 } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import axios from "axios";
-import { flexbox } from '@mui/system';
+import { Category } from "../types";
+import {
+  buttonStyles, submitButton, centeredContainer, formControl, input, buttonBack,
+  mainImageStyle, additionalImage, additionalImageWrapper, additionalImagesList, deleteIconButton, textField
+} from "../styles/addProductFormStyles";
+import { Link } from 'react-router-dom';
 
 interface AddProductFormProps {
   onAddProduct: (newProduct: any) => void;
 }
 
-interface Category {
-  id: number;
-  name: string;
-}
-
-const styles = {
-  inputFile: {
-    backgroundColor: "rgba(41,105,217,0.22)",
-    color: "black",
-    padding: "0.5rem 1rem",
-    borderRadius: "0.25rem",
-    width: "100%",
-    fontSize: "1rem",
-    cursor: "pointer",
-    border: "none",
-    outline: "none",
-    transition: "all 0.3s ease",
-    marginBottom: "1rem"
-  },
-  formControl: {
-    width: "100%",
-    display: "flex",
-    ...flexbox({
-      flexWrap: "wrap",
-    }),
-    marginBottom: "1rem"
-  },
-  formGroup: {
-    width: "100%",
-    ...flexbox({
-      flexDirection: "row",
-      justifyContent: "space-between",
-    }),
-  },
-  categoryButton: {
-    width: "27%",
-    flexShrink: 0,
-  },
-};
-
 const AddProductForm: React.FC<AddProductFormProps> = ({onAddProduct}) => {
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [price, setPrice] = useState<number>(0);
-  const [mainImage, setMainImage] = useState<File | null>(null);
+  const [amount, setAmount] = useState<number>(0);
+  const [mainImage, setMainImage] = useState<File | "">("");
   const [additionalImages, setAdditionalImages] = useState<File[]>([]);
   const [mainImageUrl, setMainImageUrl] = useState<string | null>(null);
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
@@ -88,6 +49,10 @@ const AddProductForm: React.FC<AddProductFormProps> = ({onAddProduct}) => {
 
   const handlePriceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPrice(parseInt(event.target.value));
+  };
+
+  const handleAmountChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setAmount(parseInt(event.target.value));
   };
 
   const handleMainImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -141,6 +106,7 @@ const AddProductForm: React.FC<AddProductFormProps> = ({onAddProduct}) => {
     formData.append("title", title);
     formData.append("description", description);
     formData.append("price", price.toString());
+    formData.append("amount", amount.toString());
 
     if (mainImage) {
       formData.append("mainImage", mainImage);
@@ -160,13 +126,16 @@ const AddProductForm: React.FC<AddProductFormProps> = ({onAddProduct}) => {
       });
 
       onAddProduct(response.data);
+
       const promises = selectedCategories.map(categoryId => addProductCategory(response.data.id, categoryId));
       await Promise.all(promises);
 
       setTitle("");
       setDescription("");
       setPrice(0);
-      setMainImage(null);
+      setAmount(0);
+      setMainImage("");
+      setMainImageUrl(null);
       setAdditionalImages([]);
       setSelectedCategories([]);
     } catch (error) {
@@ -181,14 +150,13 @@ const AddProductForm: React.FC<AddProductFormProps> = ({onAddProduct}) => {
         value={title}
         onChange={handleTitleChange}
         fullWidth
-        style={{marginBottom: "1rem"}}
-      />
+        sx={textField}/>
       <TextField
         label="Description"
         value={description}
         onChange={handleDescriptionChange}
         fullWidth
-        style={{marginBottom: "1rem"}}
+        sx={textField}
         autoComplete="off"
       />
       <TextField
@@ -197,60 +165,79 @@ const AddProductForm: React.FC<AddProductFormProps> = ({onAddProduct}) => {
         value={price}
         onChange={handlePriceChange}
         fullWidth
-        style={{marginBottom: "1rem"}}
+        sx={textField}
       />
-      <FormControl component="fieldset" style={styles.formControl}>
+      <TextField
+        label="Amount"
+        type="number"
+        value={amount}
+        onChange={handleAmountChange}
+        fullWidth
+        sx={textField}
+      />
+      <Container sx={centeredContainer}>
+      <FormControl component="fieldset" sx={formControl}>
         <FormLabel component="legend">Category</FormLabel>
-        <FormGroup style={styles.formGroup}>
-          {allCategories.map((category) => (
-            <FormControlLabel style={styles.categoryButton}
-              key={category.id}
-              control={
-                <Checkbox
-                  checked={selectedCategories.includes(category.id)}
-                  onChange={handleCategoryChange}
-                  value={category.id.toString()}
+        <FormGroup>
+          <Grid container spacing={3} >
+            {allCategories.map((category) => (
+              <Grid item xs={4} key={category.id}>
+                <FormControlLabel key={category.id} label={category.name} control={
+                    <Checkbox
+                      checked={selectedCategories.includes(category.id)}
+                      onChange={handleCategoryChange}
+                      value={category.id.toString()}
+                    />
+                  }
                 />
-              }
-              label={category.name}
-            />
-          ))}
+              </Grid>
+            ))}
+          </Grid>
         </FormGroup>
       </FormControl>
-      <input style={styles.inputFile} type="file" onChange={handleMainImageChange}/>
+      </Container>
+      <Box className={"input-file-box"}>
+        <Input type="file" onChange={handleMainImageChange} id="file-input-main" disableUnderline sx={input}/>
+        <label htmlFor="file-input-main">
+          <Button component="span" sx={buttonStyles}>
+            Choose main photo
+          </Button>
+        </label>
+      </Box>
       {mainImageUrl && (
-        <img
-          src={mainImageUrl}
-          alt="Main Image"
-          style={{maxWidth: "30%", marginBottom: "1rem", borderRadius: "0.25rem"}}
-        />
+        <Box component="img" src={mainImageUrl} alt="Main Image" sx={mainImageStyle}/>
       )}
-      <input style={styles.inputFile} type="file" multiple onChange={handleAdditionalImagesChange}/>
-      <div style={{ display: "flex", flexWrap: "wrap" }}>
+      <Box className={"input-file-box"}>
+        <Input type="file" onChange={handleAdditionalImagesChange} id="file-input-additional" disableUnderline sx={input}/>
+        <label htmlFor="file-input-additional">
+          <Button component="span" sx={buttonStyles}>
+            Choose additional photos
+          </Button>
+        </label>
+      </Box>
+      <Box sx={additionalImagesList}>
         {additionalImages.map((file, index) => (
-          <div key={index} style={{position: 'relative', maxWidth: "30%", margin: "0.5rem"}}>
-            <img
+          <Box key={index} sx={additionalImageWrapper}>
+            <Box
+              component="img"
               key={index}
               src={URL.createObjectURL(file)}
               alt={`Additional Image ${index + 1}`}
-              style={{maxWidth: "100%", marginBottom: "1rem", borderRadius: "0.25rem"}}
+              sx={additionalImage}
             />
-            <IconButton
-              style={{position: 'absolute', top: '0.25rem', right: '0.25rem', backgroundColor: "white"}}
-              onClick={() => handleDeleteImage(index)}
-            >
+            <IconButton sx={deleteIconButton} onClick={() => handleDeleteImage(index)}>
               <CloseIcon/>
             </IconButton>
-          </div>
+          </Box>
         ))}
-      </div>
-      <Button type="submit" variant="contained" sx={{
-        py: '0.8rem',
-        mt: 2,
-        width: '100%',
-        marginInline: 'auto',
-      }}>
+      </Box>
+      <Button type="submit" variant="contained" sx={submitButton}>
         Add product
+      </Button>
+      <Button variant="outlined" sx={buttonBack}>
+        <Link to="/productPage" style={{ textDecoration: 'none', color: 'inherit' }}>
+          Back
+        </Link>
       </Button>
     </form>
   );

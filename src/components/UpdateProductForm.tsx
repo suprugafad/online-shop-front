@@ -1,9 +1,10 @@
-import React, {useState, useEffect, FormEvent} from 'react';
+import React, { useState, useEffect, FormEvent } from 'react';
 import { TextField, Button, FormControl, FormLabel, FormGroup, FormControlLabel, Checkbox, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import axios from 'axios';
-import {Category} from "@mui/icons-material";
-import {flexbox} from "@mui/system";
+import { flexbox } from "@mui/system";
+import { Product, Category } from "../types";
+import {textField} from "../styles/addProductFormStyles";
 
 const styles = {
   inputFile: {
@@ -40,40 +41,30 @@ const styles = {
   },
 };
 
-interface Category {
-  id: number;
-  name: string;
-}
-
 interface UpdateProductFormProps {
   product: Product;
   onUpdate: (updatedProduct: Partial<Product>) => void;
-}
-
-interface Product {
-  id: number;
-  title: string;
-  description: string;
-  price: number;
-  mainImage: string | null;
-  mainImageUrl: string | null;
-  additionalImages: string[];
-  categories: number[] | null;
 }
 
 const UpdateProductForm: React.FC<UpdateProductFormProps> = ({ product, onUpdate }) => {
   const [title, setTitle] = useState<string>(product.title);
   const [description, setDescription] = useState<string>(product.description);
   const [price, setPrice] = useState<number>(product.price);
-  const [mainImage, setMainImage] = useState<string | null>(product.mainImage);
-  const [additionalImages, setAdditionalImages] = useState<string[]>(product.additionalImages);
-  const [mainImageUrl, setMainImageUrl] = useState<string | null>(product.mainImageUrl);
-  const [selectedCategories, setSelectedCategories] = useState<number[] | null>(product.categories);
+  const [amount, setAmount] = useState<number>(0);
+  const [mainImage, setMainImage] = useState<string>('');
+  const [additionalImages, setAdditionalImages] = useState<string[]>([]);
+  const [mainImageUrl, setMainImageUrl] = useState<string>(`http://localhost:5000/assets/images/products/${product.title}/${product.mainImage}`);
+  const [selectedCategories, setSelectedCategories] = useState<number[]>(product.categories || []);
   const [allCategories, setAllCategories] = useState<Category[]>([]);
+  const [initialCategories, setInitialCategories] = useState<number[]>(product.categories || []);
 
   useEffect(() => {
+    setMainImageUrl(`http://localhost:5000/assets/images/products/${product.title}/${product.mainImage}`);
+    setAdditionalImages(product.additionalImages ?
+      product.additionalImages.map(img => `http://localhost:5000/assets/images/products/${product.title}/${img}`) : []);
     fetchCategories();
-  }, []);
+    fetchProductCategories(product.id);
+  }, [product]);
 
   const fetchCategories = async () => {
     try {
@@ -94,6 +85,30 @@ const UpdateProductForm: React.FC<UpdateProductFormProps> = ({ product, onUpdate
     }
   };
 
+  const fetchProductCategories = async (productId: number) => {
+    try {
+      const response = await axios.get(`http://localhost:5000/api/productCategories/product_id/${productId}`);
+
+      if (response && response.data) {
+        console.log(response.data)
+        const productCategories = response.data.map((category: any) => category._categoryId);
+        setInitialCategories(productCategories || [])
+        setSelectedCategories(productCategories);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const deleteProductCategory = async (productId: number, categoryId: number) => {
+    try {
+      await axios.delete(`http://localhost:5000/api/productCategories/${productId}/${categoryId}`);
+    } catch (error) {
+      console.error(error);
+      throw new Error("Unable to delete product category");
+    }
+  };
+
   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(event.target.value);
   };
@@ -104,6 +119,10 @@ const UpdateProductForm: React.FC<UpdateProductFormProps> = ({ product, onUpdate
 
   const handlePriceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPrice(parseInt(event.target.value));
+  };
+
+  const handleAmountChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setAmount(parseInt(event.target.value));
   };
 
   const handleMainImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -142,6 +161,7 @@ const UpdateProductForm: React.FC<UpdateProductFormProps> = ({ product, onUpdate
 
   const handleCategoryChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const categoryId = parseInt(event.target.value);
+    console.log(categoryId)
     if (selectedCategories && selectedCategories.includes(categoryId)) {
       setSelectedCategories(selectedCategories.filter(id => id !== categoryId));
     } else {
@@ -172,17 +192,22 @@ const UpdateProductForm: React.FC<UpdateProductFormProps> = ({ product, onUpdate
       title,
       description,
       price,
+      amount,
       mainImage,
+      mainImageUrl,
       additionalImages,
       categories: selectedCategories,
     };
 
     onUpdate(updatedProduct);
 
-    if (selectedCategories) {
-      const promises = selectedCategories.map(categoryId => addProductCategory(updatedProduct.id, categoryId));
-      await Promise.all(promises);
-    }
+    const categoriesToAdd = selectedCategories.filter(id => !initialCategories.includes(id));
+    const categoriesToDelete = initialCategories.filter(id => !selectedCategories.includes(id));
+
+    const addPromises = categoriesToAdd.map(categoryId => addProductCategory(updatedProduct.id, categoryId));
+    const deletePromises = categoriesToDelete.map(categoryId => deleteProductCategory(updatedProduct.id, categoryId));
+
+    await Promise.all([...addPromises, ...deletePromises]);
   };
 
   return (
@@ -210,6 +235,14 @@ const UpdateProductForm: React.FC<UpdateProductFormProps> = ({ product, onUpdate
         fullWidth
         style={{marginBottom: "1rem"}}
       />
+      <TextField
+        label="Amount"
+        type="number"
+        value={amount}
+        onChange={handleAmountChange}
+        fullWidth
+        sx={textField}
+      />
       <FormControl component="fieldset" style={styles.formControl}>
         <FormLabel component="legend">Category</FormLabel>
         <FormGroup style={styles.formGroup}>
@@ -218,7 +251,7 @@ const UpdateProductForm: React.FC<UpdateProductFormProps> = ({ product, onUpdate
               key={category.id}
               control={
                 <Checkbox
-                  checked={(selectedCategories && category) ? selectedCategories.includes(category.id) : false}
+                  checked={selectedCategories.includes(category.id)}
                   onChange={handleCategoryChange}
                   value={category.id.toString()}
                 />
@@ -229,20 +262,20 @@ const UpdateProductForm: React.FC<UpdateProductFormProps> = ({ product, onUpdate
         </FormGroup>
       </FormControl>
       <input style={styles.inputFile} type="file" onChange={handleMainImageChange}/>
-      {mainImageUrl && (
+      {(mainImage || mainImageUrl) && (
         <img
-          src={mainImageUrl}
+          src={mainImageUrl ?? undefined}
           alt="Main Image"
           style={{maxWidth: "30%", marginBottom: "1rem", borderRadius: "0.25rem"}}
         />
       )}
       <input style={styles.inputFile} type="file" multiple onChange={handleAdditionalImagesChange}/>
       <div style={{ display: "flex", flexWrap: "wrap" }}>
-        {additionalImages && additionalImages.map((file, index) => (
+        {additionalImages && additionalImages.map((url, index) => (
           <div key={index} style={{position: 'relative', maxWidth: "30%", margin: "0.5rem"}}>
             <img
               key={index}
-              src={file}
+              src={url}
               alt={`Additional Image ${index + 1}`}
               style={{maxWidth: "100%", marginBottom: "1rem", borderRadius: "0.25rem"}}
             />

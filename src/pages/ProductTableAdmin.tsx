@@ -1,29 +1,13 @@
 import React, { useState, useEffect } from "react";
-import ProductTable from "../components/productTable";
+import ProductTable from "../components/ProductTable";
 import axios from "axios";
+import { Product, Category } from "../types";
+import { Button } from "@mui/material";
+import { Link } from "react-router-dom";
 
-interface Product {
-  id: number;
-  title: string;
-  description: string;
-  price: number;
-  mainImage: string | null;
-  mainImageUrl: string | null;
-  additionalImages: string[];
-  categories: number[] | null;
-}
-
-interface Category {
-  id: number;
-  name: string;
-}
 
 const ProductPage: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
-
-  useEffect(() => {
-    fetchProducts();
-  }, []);
 
   const fetchProducts = async () => {
     try {
@@ -58,6 +42,10 @@ const ProductPage: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
   const handleDelete = async (id: number) => {
     try {
       await axios.delete(`http://localhost:5000/api/products/${id}`);
@@ -88,12 +76,18 @@ const ProductPage: React.FC = () => {
   return (
     <div >
       <h1 style={{textAlign: "center"}}>Products</h1>
+      <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <Link to="/addProduct">
+          <Button variant="contained" color="primary" style={{ marginBottom: '1rem'}}>
+            Add Product
+          </Button>
+        </Link>
+      </div>
       <div style={{display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         width: '100%',
         height: '100%',}}>
-
         <ProductTable
           productsTable={products}
           handleDeleteTable={handleDelete}

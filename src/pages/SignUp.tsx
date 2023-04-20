@@ -4,7 +4,7 @@ import React, { FC } from 'react';
 import { useForm, SubmitHandler, FormProvider } from 'react-hook-form';
 import { object, string, TypeOf } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import FormInput from '../components/formInput';
+import FormInput from '../components/FormInput';
 // import { ReactComponent as GoogleLogo } from ".//frontend/src/assets/google.svg";
 import { LinkItem, OauthMuiLink } from './SignIn';
 import axios from "axios";

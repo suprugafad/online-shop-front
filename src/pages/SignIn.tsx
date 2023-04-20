@@ -14,7 +14,7 @@ import { useForm, SubmitHandler, FormProvider } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 import { literal, object, string, TypeOf } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import FormInput from '../components/formInput';
+import FormInput from '../components/FormInput';
 // import { ReactComponent as GoogleLogo } from "../assets/google.svg";
 import styled from '@emotion/styled';
 import axios from "axios";

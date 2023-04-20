@@ -3,28 +3,13 @@ import {
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Modal
 } from '@mui/material';
 import axios from 'axios';
-import UpdateProductForm from "./updateProductForm";
-
-interface Product {
-  id: number;
-  title: string;
-  description: string;
-  price: number;
-  mainImage: string | null;
-  mainImageUrl: string | null;
-  additionalImages: string[];
-  categories: number[] | null;
-}
+import UpdateProductForm from "./UpdateProductForm";
+import { Category, Product } from "../types";
 
 interface ProductTableProps {
   productsTable: Product[];
   handleDeleteTable: (id: number) => Promise<void>;
   handleUpdateTable: (updatedProduct: Partial<Product>) => Promise<void>;
-}
-
-interface Category {
-  id: number;
-  name: string;
 }
 
 const ProductTable: React.FC<ProductTableProps> = ({ productsTable, handleDeleteTable, handleUpdateTable }) => {
@@ -59,6 +44,7 @@ const ProductTable: React.FC<ProductTableProps> = ({ productsTable, handleDelete
           title: product._title,
           description: product._description,
           price: product._price,
+          amount: product._amount,
           mainImage: product._mainImage,
           additionalImages: product._additionalImages,
           categories: categories,
@@ -110,6 +96,7 @@ const ProductTable: React.FC<ProductTableProps> = ({ productsTable, handleDelete
               <TableCell>Title</TableCell>
               <TableCell>Description</TableCell>
               <TableCell>Price</TableCell>
+              <TableCell>Amount</TableCell>
               <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
@@ -119,6 +106,7 @@ const ProductTable: React.FC<ProductTableProps> = ({ productsTable, handleDelete
                 <TableCell>{product.title}</TableCell>
                 <TableCell>{product.description}</TableCell>
                 <TableCell>{product.price}</TableCell>
+                <TableCell>{product.amount}</TableCell>
                 <TableCell>
                   <Button variant="contained" color="primary" onClick={() => handleOpen(product)} style={{marginRight:"0.5rem"}}>
                     Edit
