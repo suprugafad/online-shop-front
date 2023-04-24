@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import axios from 'axios';
-import {Box, Container, Grid, Pagination} from '@mui/material';
+import { Box, Container, Grid, Pagination } from '@mui/material';
 import { ProductComponent } from './ProductComponent';
 import { Product } from '../types'
 
@@ -23,19 +23,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ filters }) => {
   const [filterPriceRange, setFilterPriceRange] = useState<number[]>([0, 1000]);
   const [noProductsFound, setNoProductsFound] = useState(false);
 
-  useEffect(() => {
-    setPage(1);
-  }, [filterPriceRange]);
-
-  useEffect(() => {
-    if (filters.manufacturers.length || filters.categories.length || filters.priceRange[0] !== 0 || filters.priceRange[1] !== 1000) {
-      console.log('filter', filters.priceRange)
-      fetchProductsWithFilter()
-    }
-    fetchProducts();
-  }, [page, filterPriceRange]);
-
-  const fetchProducts = async () => {
+  const fetchProducts = useCallback(async () => {
     try {
       const response = await axios.get(`http://localhost:5000/api/products/paginated?page=${page}&limit=${PRODUCTS_PER_PAGE}`);
       const products = response.data.products.map((product: any) => ({
@@ -51,36 +39,52 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ filters }) => {
     } catch (error) {
       console.error(error);
     }
-  };
+  }, [page]);
 
-  const fetchProductsWithFilter = async () => {
+  const fetchProductsWithFilter = useCallback(async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/products/byFilterPaginated?page=${page}&limit=${PRODUCTS_PER_PAGE}&minPrice=${filters.priceRange[0]}&maxPrice=${filters.priceRange[1]}&manufacturers=${filters.manufacturers.join(',')}`);
-
-      const data = response.data.products.map((product: any) => ({
-        id: product._id,
-        title: product._title,
-        price: product._price,
-        mainImage: product._mainImage,
+      const response = await axios.get(`http://localhost:5000/api/products/byFilterPaginated?page=${page}&limit=${PRODUCTS_PER_PAGE}&minPrice=${filters.priceRange[0]}&maxPrice=${filters.priceRange[1]}&manufacturers=${filters.manufacturers.join(',')}&categories=${filters.categories.join(',')}`);
+      const data = response.data.products.map((productInfo: { product: any, category_names: number[] }) => ({
+        id: productInfo.product._id,
+        title: productInfo.product._title,
+        price: productInfo.product._price,
+        mainImage: productInfo.product._mainImage,
       }));
+
       setProducts(data);
-      console.log(response)
       const amount = parseInt(response.data.amount);
-      console.log('amount', amount)
       setTotalProducts(amount);
       setNoProductsFound(amount === 0);
     } catch (error) {
       console.error(error);
     }
-  };
+  }, [filters, page]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [filterPriceRange]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        if (filters.manufacturers.length || filters.categories.length || filters.priceRange[0] !== 0 || filters.priceRange[1] !== 1000) {
+          await fetchProductsWithFilter();
+        } else {
+          await fetchProducts();
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData().catch(() => {});
+  }, [page, filterPriceRange, filters, fetchProducts, fetchProductsWithFilter]);
 
   const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setPage(value);
   };
 
   const totalPages = Math.ceil(totalProducts / PRODUCTS_PER_PAGE);
-  console.log(totalPages)
-  console.log(totalProducts)
 
   useEffect(() => {
     setFilterPriceRange(filters.priceRange);
