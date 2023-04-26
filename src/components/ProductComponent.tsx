@@ -1,7 +1,8 @@
 import React from 'react';
-import {Box, Card, CardActionArea, CardContent, CardMedia, Typography} from '@mui/material';
+import { Box, Card, CardActionArea, CardContent, CardMedia, Typography } from '@mui/material';
 import styled from '@emotion/styled';
 import { useNavigate } from "react-router-dom";
+import { ProductCard } from "../types";
 
 const StyledCard = styled(Card)`
   transition: transform 0.3s;
@@ -10,13 +11,6 @@ const StyledCard = styled(Card)`
     transform: translateY(-10px);
   }
 `;
-
-interface ProductCard {
-  id: number,
-  title: string,
-  price: string,
-  mainImage: string,
-}
 
 export const ProductComponent: React.FC<ProductCard> = ({id, title, price, mainImage}) => {
   const navigate = useNavigate();

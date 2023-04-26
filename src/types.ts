@@ -14,3 +14,16 @@ export interface Product {
   additionalImages: string[];
   categories: number[] | null;
 }
+
+export interface Filters {
+  categories: string[];
+  manufacturers: string[];
+  priceRange: number[];
+}
+
+export interface ProductCard {
+  id: number,
+  title: string,
+  price: string,
+  mainImage: string,
+}

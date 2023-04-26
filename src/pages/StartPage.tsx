@@ -1,14 +1,10 @@
-import React, {useState} from "react";
+import React, { useState} from "react";
 import { ProductCatalog } from "../components/ProductCatalog";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { ProductFilters } from "../components/ProductFilters";
-
-interface Filters {
-  categories: string[];
-  manufacturers: string[];
-  priceRange: number[];
-}
+import { Filters } from "../types";
+import { Box, CircularProgress } from '@mui/material';
 
 const StartPage = () => {
   const [filter, setFilter] = useState<Filters>({ categories: [], manufacturers: [], priceRange:[0, 1000] });
@@ -19,7 +15,7 @@ const StartPage = () => {
 
   return (
     <>
-      <Header title="Shoooooop" />
+      <Header title="Shop" />
       <div style={{
         display: 'flex',
         justifyContent: 'center',

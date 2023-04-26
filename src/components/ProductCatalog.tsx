@@ -1,31 +1,27 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import axios from 'axios';
-import { Box, Container, Grid, Pagination } from '@mui/material';
+import {Box, CircularProgress, Container, FormControl, Grid, MenuItem, Pagination, Typography, Select, SelectChangeEvent} from '@mui/material';
 import { ProductComponent } from './ProductComponent';
-import { Product } from '../types'
+import { Product, Filters } from '../types';
 
 const PRODUCTS_PER_PAGE = 12;
-
-interface Filters {
-  categories: string[];
-  manufacturers: string[];
-  priceRange: number[];
-}
 
 interface ProductCatalogProps {
   filters: Filters;
 }
 
-export const ProductCatalog: React.FC<ProductCatalogProps> = ({ filters }) => {
+export const ProductCatalog: React.FC<ProductCatalogProps> = ({ filters}) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [totalProducts, setTotalProducts] = useState(0);
   const [page, setPage] = useState(1);
   const [filterPriceRange, setFilterPriceRange] = useState<number[]>([0, 1000]);
   const [noProductsFound, setNoProductsFound] = useState(false);
+  const [sortOption, setSortOption] = useState('no');
+  // const [loading, setLoading] = useState(false);
 
-  const fetchProducts = useCallback(async () => {
+  const fetchProducts = useCallback(async (sortOption: string) => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/products/paginated?page=${page}&limit=${PRODUCTS_PER_PAGE}`);
+      const response = await axios.get(`http://localhost:5000/api/products/paginated?page=${page}&limit=${PRODUCTS_PER_PAGE}&sort=${sortOption}`);
       const products = response.data.products.map((product: any) => ({
         id: product._id,
         title: product._title,
@@ -41,9 +37,9 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ filters }) => {
     }
   }, [page]);
 
-  const fetchProductsWithFilter = useCallback(async () => {
+  const fetchProductsWithFilter = useCallback(async (sortOption: string) => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/products/byFilterPaginated?page=${page}&limit=${PRODUCTS_PER_PAGE}&minPrice=${filters.priceRange[0]}&maxPrice=${filters.priceRange[1]}&manufacturers=${filters.manufacturers.join(',')}&categories=${filters.categories.join(',')}`);
+      const response = await axios.get(`http://localhost:5000/api/products/byFilterPaginated?page=${page}&limit=${PRODUCTS_PER_PAGE}&minPrice=${filters.priceRange[0]}&maxPrice=${filters.priceRange[1]}&manufacturers=${filters.manufacturers.join(',')}&categories=${filters.categories.join(',')}&sort=${sortOption}`);
       const data = response.data.products.map((productInfo: { product: any, category_names: number[] }) => ({
         id: productInfo.product._id,
         title: productInfo.product._title,
@@ -66,22 +62,31 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ filters }) => {
 
   useEffect(() => {
     const fetchData = async () => {
+      // setLoading(true);
       try {
         if (filters.manufacturers.length || filters.categories.length || filters.priceRange[0] !== 0 || filters.priceRange[1] !== 1000) {
-          await fetchProductsWithFilter();
+          await fetchProductsWithFilter(sortOption);
         } else {
-          await fetchProducts();
+          await fetchProducts(sortOption);
         }
       } catch (error) {
         console.error("Error fetching data:", error);
-      }
+      } /*finally {
+        setTimeout(() => {
+          setLoading(false);
+        }, 500)
+      } */
     };
 
     fetchData().catch(() => {});
-  }, [page, filterPriceRange, filters, fetchProducts, fetchProductsWithFilter]);
+  }, [page, sortOption, filterPriceRange, filters, fetchProducts, fetchProductsWithFilter]);
 
   const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setPage(value);
+  };
+
+  const handleSortChange = (event: SelectChangeEvent<string>) => {
+    setSortOption(event.target.value);
   };
 
   const totalPages = Math.ceil(totalProducts / PRODUCTS_PER_PAGE);
@@ -90,9 +95,34 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ filters }) => {
     setFilterPriceRange(filters.priceRange);
   }, [filters.priceRange]);
 
+  // if (loading) {
+  //   return (
+  //     <>
+  //       <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
+  //         <CircularProgress />
+  //       </Box>
+  //     </>
+  //   );
+  // }
+
   return (
     <Box sx={{width: '100%', marginTop:'50px'}}>
       <Container maxWidth="lg">
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 2 }}>
+          <FormControl variant="outlined" size="small">
+            <Typography sx={{ marginRight: 1 }}>Sort by:</Typography>
+            <Select
+              value={sortOption}
+              onChange={handleSortChange}
+              label="Sort"
+            >
+              <MenuItem value="no">No</MenuItem>
+              <MenuItem value="lowest-price">Lowest price</MenuItem>
+              <MenuItem value="highest-price">Highest price</MenuItem>
+              <MenuItem value="newest">Newest</MenuItem>
+            </Select>
+          </FormControl>
+        </Box>
         {noProductsFound ? (
           <Box sx={{ display: 'flex', justifyContent: 'center', fontSize: '2rem', fontWeight: 'bold', marginTop: '3rem' }}>
             No products found

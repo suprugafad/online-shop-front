@@ -1,22 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
-import {
-  Box, Button,
-  Checkbox,
-  FormControl,
-  FormControlLabel,
-  FormGroup,
-  FormLabel,
-  Slider,
-  TextField,
-  Typography,
-} from '@mui/material';
-
-interface Filters {
-  categories: string[];
-  manufacturers: string[];
-  priceRange: number[];
-}
+import { Box, Button, Checkbox, FormControl, FormControlLabel, FormGroup, FormLabel, Slider, TextField, Typography, } from '@mui/material';
+import { Filters } from "../types";
 
 interface ProductFiltersProps {
   filters: Filters;
@@ -30,12 +15,17 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({ filters, onFilte
   const [allCategories, setAllCategories] = useState<any[]>([]);
   const [allManufacturers, setAllManufacturers] = useState<any[]>([]);
 
-  useEffect(() => {
-    fetchCategories();
-    fetchManufacturers();
+  const fetchManufacturers = useCallback( async () => {
+    try {
+      const manufacturers = await axios.get("http://localhost:5000/api/products/manufacturers");
+
+      setAllManufacturers(manufacturers.data);
+    } catch (error) {
+      console.error(error);
+    }
   }, []);
 
-  const fetchCategories = async () => {
+  const fetchCategories = useCallback( async () => {
     try {
       const response = await axios.get("http://localhost:5000/api/categories");
       let categories: [] = [];
@@ -47,22 +37,24 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({ filters, onFilte
           }
         ));
       }
-
       setAllCategories(categories);
     } catch (error) {
       console.error(error);
     }
-  };
+  }, []);
 
-  const fetchManufacturers = async () => {
-    try {
-      const manufacturers = await axios.get("http://localhost:5000/api/products/manufacturers");
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        await fetchCategories();
+        await fetchManufacturers();
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
 
-      setAllManufacturers(manufacturers.data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+    fetchData().catch(() => {});
+  }, [fetchCategories, fetchManufacturers]);
 
   const handleCategoryChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, checked } = event.target;

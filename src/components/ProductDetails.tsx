@@ -14,7 +14,7 @@ export const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
 
   useEffect(() => {
-    fetchProductCategories(product.id);
+    fetchProductCategories(product.id).catch(() => {});
   }, [product.id]);
 
   const fetchProductCategories = async (productId: number) => {
@@ -146,8 +146,6 @@ export const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
       </Box>
     );
   };
-
-
 
   return (
     <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: '100px', marginLeft: '30px', marginRight:'30px' }}>
