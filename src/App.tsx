@@ -7,6 +7,7 @@ import AddProduct from "./pages/AddProduct";
 import ProductPage from "./pages/ProductTableAdmin";
 import StartPage from "./pages/StartPage";
 import { ProductDetailsPage } from "./pages/ProductDetailsPage";
+import CartPage from "./pages/CartPage";
 
 function App() {
   return (
@@ -15,10 +16,12 @@ function App() {
       <Routes>
         <Route path="/product/:id" element={<ProductDetailsPage />} />
         <Route path="/" element={<StartPage />} />
-        <Route path='/' element={<SignInPage />} />
+        <Route path='/signin' element={<SignInPage />} />
         <Route path='/signup' element={<SignUpPage />} />
         <Route path='/addProduct' element={<AddProduct />} />
         <Route path='/productPage' element={<ProductPage />}/>
+        <Route path='/cart' element={<CartPage />}/>
+
       </Routes>
     </Router>
   );

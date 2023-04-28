@@ -9,7 +9,7 @@ import {
   Checkbox,
 } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
-import React, { FC } from 'react';
+import React from 'react';
 import { useForm, SubmitHandler, FormProvider } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 import { literal, object, string, TypeOf } from 'zod';
@@ -17,7 +17,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import FormInput from '../components/FormInput';
 // import { ReactComponent as GoogleLogo } from "../assets/google.svg";
 import styled from '@emotion/styled';
-import axios from "axios";
+import axios, {AxiosError} from "axios";
+import { useNavigate } from 'react-router-dom';
 
 export const LinkItem: any = styled(Link)`
   text-decoration: none;
@@ -57,7 +58,9 @@ const loginSchema = object({
 
 type ILogin = TypeOf<typeof loginSchema>;
 
-const SignInPage: FC = () => {
+const SignInPage = () => {
+  const navigate = useNavigate();
+
   const defaultValues: ILogin = {
     email: '',
     password: '',
@@ -70,10 +73,14 @@ const SignInPage: FC = () => {
 
   const onSubmitHandler: SubmitHandler<ILogin> = async (values: ILogin) => {
     try {
-      const response = await axios.post(`http://localhost:5000/api/auth/login`, values, { withCredentials: true });
-      console.log(response.data);
-    } catch (error) {
+      await axios.post(`http://localhost:5000/api/auth/login`, values, { withCredentials: true });
+      navigate('/');
+    } catch (error: unknown) {
       console.error(error);
+      if ((error as AxiosError)?.response?.status === 401) {
+        methods.setError('email', { type: 'manual', message: 'Invalid email or password' });
+        methods.setError('password', { type: 'manual', message: 'Invalid email or password' });
+      }
     }
   };
 

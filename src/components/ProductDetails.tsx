@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import axios from 'axios';
 import { Button, Typography, Box} from '@mui/material';
 import { NavigateBefore, NavigateNext } from '@mui/icons-material';
 import { Product, Category } from '../types';
+import { CartContext } from "./CartContext";
 
 type ProductDetailsProps = {
   product: Product;
@@ -12,6 +13,8 @@ export const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
   const [productCategories, setProductCategories] = useState<Category[]>([]);
   const isAvailable = product.amount > 0;
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+
+  const cartContext = useContext(CartContext);
 
   useEffect(() => {
     fetchProductCategories(product.id).catch(() => {});
@@ -47,6 +50,18 @@ export const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
 
   const handleThumbnailClick = (index: number) => {
     setActiveImageIndex(index);
+  };
+
+  const handleAddToCart = async () => {
+    try {
+      await axios.post("http://localhost:5000/api/cartItems", {
+        productId: product.id,
+        quantity: 1,
+      });
+      cartContext.addToCart({ id: product.id, price: String(product.price), title: product.title, mainImage: product.mainImage });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const renderThumbnails = () => {
@@ -177,7 +192,7 @@ export const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
           </Typography>
         </Box>
         <Box mt={2}>
-          <Button variant="contained" color="primary" disabled={!isAvailable}>
+          <Button variant="contained" color="primary" disabled={!isAvailable} onClick={handleAddToCart}>
             Add to cart
           </Button>
         </Box>
