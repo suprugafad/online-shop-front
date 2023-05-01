@@ -1,9 +1,8 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Button, Typography, Box} from '@mui/material';
+import { Button, Typography, Box } from '@mui/material';
 import { NavigateBefore, NavigateNext } from '@mui/icons-material';
 import { Product, Category } from '../types';
-import { CartContext } from "./CartContext";
 
 type ProductDetailsProps = {
   product: Product;
@@ -13,8 +12,6 @@ export const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
   const [productCategories, setProductCategories] = useState<Category[]>([]);
   const isAvailable = product.amount > 0;
   const [activeImageIndex, setActiveImageIndex] = useState(0);
-
-  const cartContext = useContext(CartContext);
 
   useEffect(() => {
     fetchProductCategories(product.id).catch(() => {});
@@ -54,11 +51,17 @@ export const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
 
   const handleAddToCart = async () => {
     try {
-      await axios.post("http://localhost:5000/api/cartItems", {
+      const userData = await axios.get('http://localhost:5000/api/auth/userId', { withCredentials: true });
+      console.log(userData);
+      const userId = userData.data.userId;
+      const response = await axios.get(`http://localhost:5000/api/carts/${userId}`, { withCredentials: true });
+      console.log(response)
+      await axios.post(`http://localhost:5000/api/cartItems`, {
         productId: product.id,
+        cartId: response.data._id,
         quantity: 1,
-      });
-      cartContext.addToCart({ id: product.id, price: String(product.price), title: product.title, mainImage: product.mainImage });
+      }, { withCredentials: true });
+
     } catch (error) {
       console.error(error);
     }

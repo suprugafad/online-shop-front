@@ -4,13 +4,12 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import { Link } from 'react-router-dom';
-import { checkAuthentication, logout } from '../api/auth';
+import { checkAuthentication, logout } from '../api/AuthAPI';
 import { useEffect, useState } from "react";
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
 
 interface HeaderProps {
   title: string;
-  // isAuthenticated: boolean;
 }
 
 const Header: React.FC<HeaderProps> = ({title}) => {
@@ -19,10 +18,16 @@ const Header: React.FC<HeaderProps> = ({title}) => {
 
   useEffect(() => {
     async function fetchData() {
-      const data = await checkAuthentication();
+      try {
+        const response = await checkAuthentication();
+        console.log(response)
 
-      if (data) {
-        setIsAuthenticated(true);
+        if (response && response.data.isAuthenticated) {
+          setIsAuthenticated(true);
+        }
+      } catch (error) {
+        console.error(error)
+        window.location.reload();
       }
     }
 
@@ -33,8 +38,11 @@ const Header: React.FC<HeaderProps> = ({title}) => {
     try {
       const response = await logout();
       if (response && response.status === 200) {
-        setIsAuthenticated(false);
-        setOpen(false);
+        const auth = await checkAuthentication();
+        if (auth) {
+          setIsAuthenticated(auth.data.isAuthenticated);
+          setOpen(false);
+        }
       } else {
         throw new Error('Logout failed');
       }
@@ -71,7 +79,9 @@ const Header: React.FC<HeaderProps> = ({title}) => {
           {isAuthenticated && (
             <>
               <Button color="inherit">Profile</Button>
-              <Button color="inherit">Cart</Button>
+              <Button component={Link} to="/cart" color="inherit">
+                Cart
+              </Button>
               <Button color="inherit" onClick={handleOpen}>
                 Log out
               </Button>

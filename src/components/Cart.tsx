@@ -1,66 +1,104 @@
-import React, { useContext } from "react";
+import React, { useEffect, useState } from "react";
 import { Grid, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button } from "@mui/material";
-import { ProductCard } from "../types";
-import { CartContext } from "./CartContext";
+import { ICartItem } from "../types";
 import CartItem from "./CartItem";
+import CartAPI from "../api/CartAPI";
+import { getUserId } from "../api/AuthAPI";
+import QuantityInput from "./QuantityInput";
 
-interface CartItem {
-  product: ProductCard;
-  quantity: number;
-}
+const CartApi = new CartAPI();
 
-interface CartProps {
-  cartItems: CartItem[];
-  total: number;
-  checkoutHandler: () => void;
-}
+const Cart = () => {
+  const [cartItems, setCartItems] = useState<ICartItem[]>([]);
 
-const Cart: React.FC<CartProps> = ({ total }) => {
-  const { cartItems, removeFromCart, checkoutHandler, addToCart } = useContext(CartContext);
+  function calculateTotal (cartItems: ICartItem[]) {
+    let total = 0;
+    cartItems.forEach((product: ICartItem) => {
+      total += product.quantity * Number(product.product.price);
+    });
+    return total;
+  }
 
-  const handleAddToCart = (product: ProductCard) => {
-    addToCart(product);
+  async function fetchCartItems() {
+    const userId = await getUserId();
+    const cartId = await CartApi.getCartId(userId);
+    const items = await CartApi.getCartItems(cartId);
+    const products = await CartApi.getProducts(items);
+
+    setCartItems(products);
+  }
+
+  useEffect(() => {
+    fetchCartItems().catch(() => {});
+  }, []);
+
+  const removeFromCartHandler = async (itemId: number) => {
+    await CartApi.deleteCartItem(itemId);
+    fetchCartItems().catch(() => {});
   };
 
-  const removeFromCartHandler = async (product: ProductCard) => {
-    removeFromCart(product);
+  const checkoutHandler = async (cartItems: ICartItem[]) => {
+
   };
+
+  const updateQuantityHandler = async (cartProduct: ICartItem, newQuantity: number) => {
+    const cartItem = {
+      id: cartProduct.id,
+      quantity: newQuantity,
+    };
+    await CartApi.updateCartItemQuantity(cartItem);
+    const updatedCartItems = cartItems.map((item) => {
+      if (item.product.id === cartProduct.product.id) {
+        item.quantity = newQuantity;
+      }
+      return item;
+    });
+    setCartItems(updatedCartItems);
+  };
+
+  const handleQuantityChange = async (item: ICartItem, newQuantity: number) => {
+    item.quantity = newQuantity;
+    await updateQuantityHandler(item, newQuantity);
+  };
+
+  const clearCartHandler = async (cartItems: ICartItem[]) => {
+
+  }
 
   return (
-    <Grid container spacing={2}>
+    <Grid container spacing={2} >
       <Grid item xs={12}>
         <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Title</TableCell>
-                <TableCell align="right">Amount</TableCell>
-                <TableCell align="right">Price</TableCell>
-                <TableCell align="right">Delete</TableCell>
+          <Table >
+            <TableHead >
+              <TableRow >
+                <TableCell style={{fontSize: 'large', textAlign: 'center'}}>Product</TableCell>
+                <TableCell align="right" style={{fontSize: 'large', textAlign: 'center'}}>Amount</TableCell>
+                <TableCell align="right" style={{fontSize: 'large', textAlign: 'center'}}>Price</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {cartItems.map((item) => (
                 <TableRow key={item.product.id}>
-                  <TableCell component="th" scope="row">
-                    <CartItem product={item.product} addToCartHandler={handleAddToCart} removeFromCartHandler={removeFromCart} />
+                  <TableCell component="th" scope="row" style={{maxWidth: '300px'}}>
+                    <CartItem item={item} removeFromCartHandler={removeFromCartHandler} />
                   </TableCell>
-                  <TableCell align="right">{item.quantity}</TableCell>
-                  <TableCell align="right">{item.product.price}</TableCell>
-                  <TableCell align="right">
-                    <Button variant="outlined" color="secondary" onClick={() => removeFromCartHandler(item.product)}>Удалить</Button>
+                  <TableCell align="right" style={{ fontSize: 'large', textAlign: 'center' }}>
+                    <QuantityInput item={item} onChange={(item: ICartItem, newQuantity: number) => handleQuantityChange(item, newQuantity)}/>
                   </TableCell>
+                  <TableCell align="right" style={{fontSize: 'large', textAlign: 'center'}}>{(Number(item.product.price) * item.quantity)}$</TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
         </TableContainer>
       </Grid>
-      <Grid item xs={12}>
-        <Typography variant="h6">Total price: {total}</Typography>
+      <Grid item xs={12} style={{textAlign: 'right'}}>
+        <Typography variant="h5">Total price: {calculateTotal(cartItems)}$</Typography>
       </Grid>
-      <Grid item xs={12}>
-        <Button variant="contained" color="primary" onClick={checkoutHandler}>Оформить заказ</Button>
+      <Grid item xs={12} style={{display: 'flex', justifyContent: 'space-between'}}>
+        <Button variant="outlined" color="primary" onClick={() => checkoutHandler(cartItems)}>Clear cart</Button>
+        <Button variant="contained" color="primary" onClick={() => clearCartHandler(cartItems)}>Checkout order</Button>
       </Grid>
     </Grid>
   );
@@ -68,72 +106,3 @@ const Cart: React.FC<CartProps> = ({ total }) => {
 
 export default Cart;
 
-
-
-
-
-// import React from "react";
-// import { Grid, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button } from "@mui/material";
-// import axios from "axios";
-// import {Product} from "../types";
-//
-// interface CartItem {
-//   product: Product;
-//   quantity: number;
-// }
-//
-// interface CartProps {
-//   cartItems: CartItem[];
-//   total: number;
-// }
-//
-// const Cart: React.FC<CartProps> = ({ cartItems, total }) => {
-//   const checkoutHandler = async () => {
-//     try {
-//       await axios.post("/api/checkout", { cartItems, total });
-//       alert("Заказ успешно оформлен.");
-//     } catch (error) {
-//       console.error(error);
-//     }
-//   };
-//
-//   return (
-//     <Grid container spacing={2}>
-//       <Grid item xs={12}>
-//         <Typography variant="h4">Корзина товаров</Typography>
-//       </Grid>
-//       <Grid item xs={12}>
-//         <TableContainer component={Paper}>
-//           <Table>
-//             <TableHead>
-//               <TableRow>
-//                 <TableCell>Название товара</TableCell>
-//                 <TableCell align="right">Количество</TableCell>
-//                 <TableCell align="right">Цена</TableCell>
-//               </TableRow>
-//             </TableHead>
-//             <TableBody>
-//               {cartItems.map((item) => (
-//                 <TableRow key={item.product.id}>
-//                   <TableCell component="th" scope="row">
-//                     {item.product.title}
-//                   </TableCell>
-//                   <TableCell align="right">{item.quantity}</TableCell>
-//                   <TableCell align="right">{item.product.price}</TableCell>
-//                 </TableRow>
-//               ))}
-//             </TableBody>
-//           </Table>
-//         </TableContainer>
-//       </Grid>
-//       <Grid item xs={12}>
-//         <Typography variant="h6">Total price: {total}</Typography>
-//       </Grid>
-//       <Grid item xs={12}>
-//         <Button variant="contained" color="primary" onClick={checkoutHandler}>Оформить заказ</Button>
-//       </Grid>
-//     </Grid>
-//   );
-// };
-//
-// export default Cart;

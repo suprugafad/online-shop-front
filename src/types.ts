@@ -27,3 +27,9 @@ export interface ProductCard {
   price: string,
   mainImage: string,
 }
+
+export interface ICartItem {
+  id: number;
+  product: ProductCard;
+  quantity: number;
+}

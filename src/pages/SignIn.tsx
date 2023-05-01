@@ -1,13 +1,4 @@
-import {
-  Container,
-  Grid,
-  Box,
-  Typography,
-  Stack,
-  Link as MuiLink,
-  FormControlLabel,
-  Checkbox,
-} from '@mui/material';
+import { Container, Grid, Box, Typography, Stack, Link as MuiLink, FormControlLabel, Checkbox,} from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
 import React from 'react';
 import { useForm, SubmitHandler, FormProvider } from 'react-hook-form';
@@ -73,7 +64,10 @@ const SignInPage = () => {
 
   const onSubmitHandler: SubmitHandler<ILogin> = async (values: ILogin) => {
     try {
-      await axios.post(`http://localhost:5000/api/auth/login`, values, { withCredentials: true });
+      const response = await axios.post(`http://localhost:5000/api/auth/login`, values, { withCredentials: true });
+
+      await axios.post('http://localhost:5000/api/carts', { userId: response.data.user.id }, { withCredentials: true });
+
       navigate('/');
     } catch (error: unknown) {
       console.error(error);
