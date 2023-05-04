@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, Typography, Grid } from "@mui/material";
-import AddProductForm, { AddProductFormProps } from "../components/AddProductForm";
+import AddProductForm, { AddProductFormProps } from "../components/admin/AddProductForm";
 
 const styles = {
   container: {

@@ -33,13 +33,11 @@ const CssTextField = styled(TextField)({
   },
 });
 
-// 👇 Type of Props the FormInput will receive
 type FormInputProps = {
   name: string;
 } & TextFieldProps;
 
 const FormInput: FC<FormInputProps> = ({ name, ...otherProps }) => {
-  // 👇 Utilizing useFormContext to have access to the form Context
   const {
     control,
     formState: { errors },

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Button, Typography, Box } from '@mui/material';
 import { NavigateBefore, NavigateNext } from '@mui/icons-material';
-import { Product, Category } from '../types';
+import { Product, Category } from '../../types';
 
 type ProductDetailsProps = {
   product: Product;

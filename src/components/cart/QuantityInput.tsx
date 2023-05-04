@@ -1,4 +1,4 @@
-import { ICartItem } from "../types";
+import { ICartItem } from "../../types";
 import { ChangeEvent, FC, useState } from "react";
 import { TextField } from "@mui/material";
 

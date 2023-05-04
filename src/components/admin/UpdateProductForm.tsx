@@ -3,8 +3,8 @@ import { TextField, Button, FormControl, FormLabel, FormGroup, FormControlLabel,
 import CloseIcon from '@mui/icons-material/Close';
 import axios from 'axios';
 import { flexbox } from "@mui/system";
-import { Product, Category } from "../types";
-import {textField} from "../styles/addProductFormStyles";
+import { Product, Category } from "../../types";
+import {textField} from "../../styles/addProductFormStyles";
 
 const styles = {
   inputFile: {

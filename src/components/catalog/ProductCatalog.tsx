@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import axios from 'axios';
 import {Box, CircularProgress, Container, FormControl, Grid, MenuItem, Pagination, Typography, Select, SelectChangeEvent} from '@mui/material';
 import { ProductComponent } from './ProductComponent';
-import { Product, Filters } from '../types';
+import { Product, Filters } from '../../types';
 
 const PRODUCTS_PER_PAGE = 12;
 

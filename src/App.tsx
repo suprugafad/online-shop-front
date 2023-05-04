@@ -8,6 +8,8 @@ import ProductPage from "./pages/ProductTableAdmin";
 import StartPage from "./pages/StartPage";
 import { ProductDetailsPage } from "./pages/ProductDetailsPage";
 import CartPage from "./pages/CartPage";
+import CheckoutPage from "./pages/CheckoutPage";
+import MainPage from "./pages/MainPage";
 
 function App() {
   return (
@@ -21,6 +23,8 @@ function App() {
         <Route path='/addProduct' element={<AddProduct />} />
         <Route path='/productPage' element={<ProductPage />}/>
         <Route path='/cart' element={<CartPage />}/>
+        <Route path='/checkout' element={<CheckoutPage />}/>
+        <Route path='/main' element={<MainPage />}/>
 
       </Routes>
     </Router>

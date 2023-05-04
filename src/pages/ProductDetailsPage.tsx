@@ -6,7 +6,7 @@ import {
   Box,
   CircularProgress,
 } from '@mui/material';
-import {ProductDetails} from "../components/ProductDetails";
+import {ProductDetails} from "../components/catalog/ProductDetails";
 
 export const ProductDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();

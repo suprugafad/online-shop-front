@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, Card, CardActionArea, CardContent, CardMedia, Typography } from '@mui/material';
 import styled from '@emotion/styled';
 import { useNavigate } from "react-router-dom";
-import { ProductCard } from "../types";
+import { ProductCard } from "../../types";
 
 const StyledCard = styled(Card)`
   transition: transform 0.3s;

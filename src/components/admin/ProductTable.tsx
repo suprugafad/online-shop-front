@@ -4,7 +4,7 @@ import {
 } from '@mui/material';
 import axios from 'axios';
 import UpdateProductForm from "./UpdateProductForm";
-import { Category, Product } from "../types";
+import { Category, Product } from "../../types";
 
 interface ProductTableProps {
   productsTable: Product[];

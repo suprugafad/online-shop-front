@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import ProductTable from "../components/ProductTable";
+import ProductTable from "../components/admin/ProductTable";
 import axios from "axios";
 import { Product, Category } from "../types";
 import { Button } from "@mui/material";

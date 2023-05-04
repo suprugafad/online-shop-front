@@ -5,11 +5,11 @@ import {
 } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import axios from "axios";
-import { Category } from "../types";
+import { Category } from "../../types";
 import {
   buttonStyles, submitButton, centeredContainer, formControl, input, buttonBack,
   mainImageStyle, additionalImage, additionalImageWrapper, additionalImagesList, deleteIconButton, textField
-} from "../styles/addProductFormStyles";
+} from "../../styles/addProductFormStyles";
 import { Link } from 'react-router-dom';
 
 interface AddProductFormProps {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { Box, Button, Checkbox, FormControl, FormControlLabel, FormGroup, FormLabel, Slider, TextField, Typography, } from '@mui/material';
-import { Filters } from "../types";
+import { Filters } from "../../types";
 
 interface ProductFiltersProps {
   filters: Filters;

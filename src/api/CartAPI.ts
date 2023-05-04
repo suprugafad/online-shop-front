@@ -63,8 +63,15 @@ class CartAPI {
 
   public async deleteCartItem(cartId: number) {
     try {
-      const response = await axios.delete(`http://localhost:5000/api/cartItems/${cartId}`, { withCredentials: true });
-      return response.data._id;
+      await axios.delete(`http://localhost:5000/api/cartItems/${cartId}`, { withCredentials: true });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  public async clearCart(cartId: number) {
+    try {
+      await axios.delete(`http://localhost:5000/api/cartItems/cart/${cartId}`, { withCredentials: true });
     } catch (error) {
       console.error(error);
     }

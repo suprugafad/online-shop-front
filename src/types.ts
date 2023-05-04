@@ -33,3 +33,16 @@ export interface ICartItem {
   product: ProductCard;
   quantity: number;
 }
+
+export interface IAddressForSelect {
+  id: number;
+  addressValue: string;
+}
+
+export interface IAddress {
+  country: string;
+  city: string;
+  street: string;
+  house: string;
+  apartment: string;
+}

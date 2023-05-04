@@ -1,8 +1,8 @@
 import React, { useState} from "react";
-import { ProductCatalog } from "../components/ProductCatalog";
+import { ProductCatalog } from "../components/catalog/ProductCatalog";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import { ProductFilters } from "../components/ProductFilters";
+import { ProductFilters } from "../components/catalog/ProductFilters";
 import { Filters } from "../types";
 import { Box, CircularProgress } from '@mui/material';
 

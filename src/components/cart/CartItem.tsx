@@ -1,7 +1,7 @@
 import React from "react";
 import { Card, CardActionArea, CardActions, CardContent, CardMedia, IconButton, Typography } from "@mui/material";
 import RemoveShoppingCartIcon from "@mui/icons-material/RemoveShoppingCart";
-import { ICartItem } from "../types";
+import { ICartItem } from "../../types";
 
 interface CartItemProps {
   item: ICartItem;
