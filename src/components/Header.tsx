@@ -3,10 +3,12 @@ import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
-import { Link } from 'react-router-dom';
-import { checkAuthentication, logout } from '../api/AuthAPI';
+import {Link, useNavigate} from 'react-router-dom';
+import {checkAuthentication, getUserId, logout} from '../api/AuthAPI';
 import { useEffect, useState } from "react";
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
+import {IUser} from "../types";
+import profileAPI from "../api/ProfileAPI";
 
 interface HeaderProps {
   title: string;
@@ -15,6 +17,9 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({title}) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [open, setOpen] = useState(false);
+  const [user, setUser] = useState<IUser>();
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function fetchData() {
@@ -24,6 +29,10 @@ const Header: React.FC<HeaderProps> = ({title}) => {
 
         if (response && response.data.isAuthenticated) {
           setIsAuthenticated(true);
+          const userId = await getUserId();
+          const user = await profileAPI.fetchUserInfo(userId);
+          console.log(user)
+          setUser(user);
         }
       } catch (error) {
         console.error(error)
@@ -59,6 +68,10 @@ const Header: React.FC<HeaderProps> = ({title}) => {
     setOpen(false);
   };
 
+  const handleProfile = () => {
+    navigate('/profile', {state: {user}});
+  }
+
   return (
     <>
       <AppBar position="static" color={'default'}>
@@ -78,7 +91,7 @@ const Header: React.FC<HeaderProps> = ({title}) => {
           )}
           {isAuthenticated && (
             <>
-              <Button color="inherit">Profile</Button>
+              <Button color="inherit" onClick={handleProfile}>Profile</Button>
               <Button component={Link} to="/cart" color="inherit">
                 Cart
               </Button>

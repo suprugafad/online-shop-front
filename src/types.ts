@@ -46,3 +46,25 @@ export interface IAddress {
   house: string;
   apartment: string;
 }
+
+export interface IUser {
+  id: number,
+  username: string,
+  email: string,
+  role: string,
+}
+
+interface IOrderItem {
+  id: number;
+  title: string;
+  price: number;
+  quantity: number;
+}
+
+export interface IOrder {
+  id: number;
+  status: string;
+  createdAt: string;
+  totalPrice: number;
+  products: IOrderItem[];
+}

@@ -43,7 +43,7 @@ class OrderAPI {
 
       for (const cartItem of products) {
         const product = await axios.get(`http://localhost:5000/api/products/${cartItem.product.id}`);
-        productsInfo.push({ id: product.data._id, price: product.data._price, title: product.data._title,});
+        productsInfo.push({ id: product.data._id, price: product.data._price, title: product.data._title, quantity: cartItem.quantity});
       }
 
       const response = await axios.post(`http://localhost:5000/api/orders`, { userId, products: productsInfo, comment, totalPrice, addressId }, { withCredentials: true });
