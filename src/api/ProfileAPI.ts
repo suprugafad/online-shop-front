@@ -1,4 +1,5 @@
 import axios from "axios";
+import {IUser} from "../types";
 
 interface IOrderResponse {
   _id: number;
@@ -54,6 +55,18 @@ class ProfileAPI {
     } catch (err) {
       console.error(err);
     }
+  }
+
+  public async updateUserInfo(updatedUser: IUser) {
+    try {
+      await axios.put(`http://localhost:5000/api/users/${updatedUser.id}`, { id: updatedUser.id, username: updatedUser.username, email: updatedUser.email, role: updatedUser.role }, {withCredentials: true});
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  public async updateUserPassword(currentPassword: string, updatedPassword: string) {
+
   }
 }
 

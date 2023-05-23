@@ -86,6 +86,7 @@ const SignUpPage: FC = () => {
                   mb: '1.5rem',
                   pb: { sm: '3rem' },
                 }}
+                style={{color: '#6d3398'}}
               >
                 Welcome To Online Shop GAMESCAPE!
               </Typography>
@@ -193,7 +194,7 @@ const SignUpPage: FC = () => {
               <Grid container justifyContent='center'>
                 <Stack sx={{ mt: '3rem', textAlign: 'center' }}>
                   <Typography sx={{ fontSize: '0.9rem', mb: '1rem' }}>
-                    Already have an account? <LinkItem to='/'>Sign in</LinkItem>
+                    Already have an account? <LinkItem to='/' style={{color: '#6d3398'}}>Sign in</LinkItem>
                   </Typography>
                 </Stack>
               </Grid>

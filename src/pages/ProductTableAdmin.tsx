@@ -4,6 +4,8 @@ import axios from "axios";
 import { Product, Category } from "../types";
 import { Button } from "@mui/material";
 import { Link } from "react-router-dom";
+import HeaderAdmin from "../components/admin/HeaderAdmin";
+import Footer from "../components/Footer";
 
 
 const ProductPage: React.FC = () => {
@@ -75,6 +77,7 @@ const ProductPage: React.FC = () => {
 
   return (
     <div >
+      <HeaderAdmin title="GameScape"/>
       <h1 style={{textAlign: "center"}}>Products</h1>
       <div style={{ display: 'flex', justifyContent: 'center' }}>
         <Link to="/addProduct">
@@ -87,13 +90,15 @@ const ProductPage: React.FC = () => {
         alignItems: 'center',
         justifyContent: 'center',
         width: '100%',
-        height: '100%',}}>
+        height: '100%',
+        marginBottom: '50px'}}>
         <ProductTable
           productsTable={products}
           handleDeleteTable={handleDelete}
           handleUpdateTable={handleUpdate}
         />
       </div>
+      <Footer></Footer>
     </div>
   );
 };

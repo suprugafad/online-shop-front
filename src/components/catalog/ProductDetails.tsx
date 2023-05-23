@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Button, Typography, Box } from '@mui/material';
+import {Button, Typography, Box, Divider} from '@mui/material';
 import { NavigateBefore, NavigateNext } from '@mui/icons-material';
 import { Product, Category } from '../../types';
 
@@ -52,10 +52,8 @@ export const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
   const handleAddToCart = async () => {
     try {
       const userData = await axios.get('http://localhost:5000/api/auth/userId', { withCredentials: true });
-      console.log(userData);
       const userId = userData.data.userId;
       const response = await axios.get(`http://localhost:5000/api/carts/${userId}`, { withCredentials: true });
-      console.log(response)
       await axios.post(`http://localhost:5000/api/cartItems`, {
         productId: product.id,
         cartId: response.data._id,
@@ -82,7 +80,8 @@ export const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        border: activeImageIndex === index ? '2px solid #3f51b5' : 'none',
+        border: activeImageIndex === index ? '2px solid #7E52A0' : 'none',
+          borderRadius: '5px'
       }} onClick={() => handleThumbnailClick(index)}>
         <img
           src={img === product.mainImageUrl ? img : `http://localhost:5000/assets/images/products/${product.title}/${img}`}
@@ -130,14 +129,20 @@ export const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
                 onClick={handlePrevImage}
                 style={{
                   position: 'absolute',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                   top: '50%',
                   left: 0,
                   transform: 'translateY(-50%)',
                   zIndex: 1,
-                  backgroundColor: 'rgba(255, 255, 255, 0.7)',
+                  backgroundColor: 'rgba(126,82,160,0.49)',
                   cursor: 'pointer',
                   padding: '10px',
-                  borderRadius: '50%'
+                  borderRadius: '50%',
+                  width: '40px',
+                  height: '40px',
+                  textAlign: 'center'
                 }}
               >
                 <NavigateBefore />
@@ -146,14 +151,19 @@ export const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
                 onClick={handleNextImage}
                 style={{
                   position: 'absolute',
+                  display: 'flex',
+                  alignItems: 'center',
                   top: '50%',
                   right: 0,
                   transform: 'translateY(-50%)',
                   zIndex: 1,
-                  backgroundColor: 'rgba(255, 255, 255, 0.7)',
+                  backgroundColor: 'rgba(126,82,160,0.49)',
                   cursor: 'pointer',
                   padding: '10px',
-                  borderRadius: '50%'
+                  borderRadius: '50%',
+                  width: '40px',
+                  height: '40px',
+                  textAlign: 'center'
                 }}
               >
                 <NavigateNext />
@@ -175,9 +185,7 @@ export const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
         <Typography gutterBottom variant="h5" component="div">
           {product.title}
         </Typography>
-        <Typography variant="body2" color="text.secondary">
-          {product.description}
-        </Typography>
+        <Divider/>
         <Box mt={2}>
           <Typography variant="h6" color="text.primary">
             ${product.price.toFixed(2)}
@@ -199,6 +207,10 @@ export const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
             Add to cart
           </Button>
         </Box>
+        <Divider style={{marginTop: '15px'}}/>
+        <Typography variant="body1" color="text.secondary" style={{marginTop: '20px', textAlign:'justify'}}>
+          {product.description}
+        </Typography>
       </div>
     </Box>
   );

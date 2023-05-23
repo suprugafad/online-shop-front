@@ -20,7 +20,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
 
   return (
     <>
-      <Card onClick={handleDetailsOpen} style={{width: '250px', height: '130px', backgroundColor:'#dbedff'}}>
+      <Card onClick={handleDetailsOpen} style={{width: '250px', height: '130px', backgroundColor:'#ece8f5'}}>
         <CardContent>
           <Typography>#{order.id}</Typography>
           <Typography>{order.status[0].toUpperCase() + order.status.slice(1)}</Typography>

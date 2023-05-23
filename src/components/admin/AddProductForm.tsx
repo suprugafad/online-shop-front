@@ -1,8 +1,20 @@
 import React, {FormEvent, useEffect, useState} from "react";
 import {
-  TextField, Button, FormControlLabel, Checkbox, FormControl,
-  FormLabel, Box, Input, IconButton, Grid, Container, FormGroup
+  TextField,
+  Button,
+  FormControl,
+  Box,
+  Input,
+  IconButton,
+  Grid,
+  Container,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions, Dialog, InputLabel, MenuItem, Select, Chip, SelectChangeEvent
 } from "@mui/material";
+import OutlinedInput from '@mui/material/OutlinedInput';
+import { Theme } from '@mui/material/styles';
 import CloseIcon from '@mui/icons-material/Close';
 import axios from "axios";
 import { Category } from "../../types";
@@ -11,6 +23,8 @@ import {
   mainImageStyle, additionalImage, additionalImageWrapper, additionalImagesList, deleteIconButton, textField
 } from "../../styles/addProductFormStyles";
 import { Link } from 'react-router-dom';
+import productAPI from "../../api/ProductAPI";
+import theme from "../../theme";
 
 interface AddProductFormProps {
   onAddProduct: (newProduct: any) => void;
@@ -18,6 +32,7 @@ interface AddProductFormProps {
 
 const AddProductForm: React.FC<AddProductFormProps> = ({onAddProduct}) => {
   const [title, setTitle] = useState<string>("");
+  const [manufacturer, setManufacturer] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [price, setPrice] = useState<number>(0);
   const [amount, setAmount] = useState<number>(0);
@@ -25,22 +40,26 @@ const AddProductForm: React.FC<AddProductFormProps> = ({onAddProduct}) => {
   const [additionalImages, setAdditionalImages] = useState<File[]>([]);
   const [mainImageUrl, setMainImageUrl] = useState<string | null>(null);
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
+  const [selectedCategoriesNames, setSelectedCategoriesNames] = useState<string[]>([]);
   const [allCategories, setAllCategories] = useState<Category[]>([]);
+  const [open, setOpen] = useState<boolean>(false);
+  const [newCategory, setNewCategory] = useState<string>("");
 
   useEffect(() => {
-    axios.get("http://localhost:5000/api/categories").then((response) => {
-      const data = response.data.map((category: any) => ({
-        id: category._id,
-        name: category._name,
-      }));
-      setAllCategories(data);
-    }).catch((error) => {
-      console.error(error);
-    });
+    fetchCategories().catch(() => {});
   }, []);
+
+  const fetchCategories = async () => {
+    const categories = await productAPI.getAllCategories();
+    setAllCategories(categories);
+  }
 
   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(event.target.value);
+  };
+
+  const handleManufacturerChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setManufacturer(event.target.value);
   };
 
   const handleDescriptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -76,14 +95,25 @@ const AddProductForm: React.FC<AddProductFormProps> = ({onAddProduct}) => {
     setAdditionalImages(newImages);
   };
 
-  const handleCategoryChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const categoryId = parseInt(event.target.value);
-    if (selectedCategories.includes(categoryId)) {
-      setSelectedCategories(selectedCategories.filter(id => id !== categoryId));
-    } else {
-      setSelectedCategories([...selectedCategories, categoryId]);
-    }
+  const handleCategoryChange = (event: SelectChangeEvent<string[]>) => {
+    const {
+      target: { value },
+    } = event;
+
+    setSelectedCategoriesNames(
+      typeof value === 'string' ? value.split(',') : value,
+    );
   };
+
+  useEffect(() => {
+    const selectedIds: number[] = [];
+    allCategories.forEach((category) => {
+      if (selectedCategoriesNames.includes(category.name)) {
+        selectedIds.push(category.id);
+      }
+    })
+    setSelectedCategories(selectedIds);
+  }, [selectedCategoriesNames, allCategories]);
 
   const addProductCategory = async (productId: number, categoryId: number) => {
     try {
@@ -104,6 +134,7 @@ const AddProductForm: React.FC<AddProductFormProps> = ({onAddProduct}) => {
     event.preventDefault();
     const formData = new FormData();
     formData.append("title", title);
+    formData.append("manufacturer", manufacturer);
     formData.append("description", description);
     formData.append("price", price.toString());
     formData.append("amount", amount.toString());
@@ -131,6 +162,7 @@ const AddProductForm: React.FC<AddProductFormProps> = ({onAddProduct}) => {
       await Promise.all(promises);
 
       setTitle("");
+      setManufacturer("");
       setDescription("");
       setPrice(0);
       setAmount(0);
@@ -138,9 +170,59 @@ const AddProductForm: React.FC<AddProductFormProps> = ({onAddProduct}) => {
       setMainImageUrl(null);
       setAdditionalImages([]);
       setSelectedCategories([]);
+      setSelectedCategoriesNames([]);
     } catch (error) {
       console.error(error);
     }
+  };
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleAddNewCategory = async () => {
+    try {
+      await productAPI.createCategory(newCategory);
+      fetchCategories().catch(() => {})
+      handleClose();
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  function getStyles(name: string, personName: readonly string[], theme: Theme) {
+    return {
+      fontWeight:
+        personName.indexOf(name) === -1
+          ? theme.typography.fontWeightRegular
+          : theme.typography.fontWeightMedium,
+    };
+  }
+
+  function getSelectedCategoriesNames(): string[] {
+    const selectedCategoriesNames: string[] = [];
+    selectedCategories.forEach((categoryId) => {
+      const category = allCategories.find((category) => category.id === categoryId);
+      if (category) {
+        selectedCategoriesNames.push(category.name);
+      }
+    });
+    return selectedCategoriesNames;
+  }
+
+  const ITEM_HEIGHT = 48;
+  const ITEM_PADDING_TOP = 8;
+  const MenuProps = {
+    PaperProps: {
+      style: {
+        maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+        width: 250,
+      },
+    },
   };
 
   return (
@@ -152,60 +234,85 @@ const AddProductForm: React.FC<AddProductFormProps> = ({onAddProduct}) => {
         fullWidth
         sx={textField}/>
       <TextField
+        label="Manufacturer"
+        value={manufacturer}
+        onChange={handleManufacturerChange}
+        fullWidth
+        sx={textField}/>
+      <TextField
         label="Description"
         value={description}
+        multiline
+        rows={4}
         onChange={handleDescriptionChange}
         fullWidth
         sx={textField}
         autoComplete="off"
       />
-      <TextField
-        label="Price"
-        type="number"
-        value={price}
-        onChange={handlePriceChange}
-        fullWidth
-        sx={textField}
-      />
-      <TextField
-        label="Amount"
-        type="number"
-        value={amount}
-        onChange={handleAmountChange}
-        fullWidth
-        sx={textField}
-      />
+      <Grid container spacing={2}>
+        <Grid item xs={6}>
+          <TextField
+            label="Price"
+            type="number"
+            value={price}
+            onChange={handlePriceChange}
+            fullWidth
+            sx={textField}
+          />
+        </Grid>
+        <Grid item xs={6}>
+          <TextField
+            label="Amount"
+            type="number"
+            value={amount}
+            onChange={handleAmountChange}
+            fullWidth
+            sx={textField}
+          />
+        </Grid>
+      </Grid>
       <Container sx={centeredContainer}>
       <FormControl component="fieldset" sx={formControl}>
-        <FormLabel component="legend">Category</FormLabel>
-        <FormGroup>
-          <Grid container spacing={3} >
-            {allCategories.map((category) => (
-              <Grid item xs={4} key={category.id}>
-                <FormControlLabel key={category.id} label={category.name} control={
-                    <Checkbox
-                      checked={selectedCategories.includes(category.id)}
-                      onChange={handleCategoryChange}
-                      value={category.id.toString()}
-                    />
-                  }
-                />
-              </Grid>
-            ))}
-          </Grid>
-        </FormGroup>
+        <InputLabel id="demo-multiple-chip-label" >Categories</InputLabel>
+        <Select
+          labelId="demo-multiple-chip-label"
+          id="demo-multiple-chip"
+          multiple
+          value={selectedCategoriesNames}
+          onChange={handleCategoryChange}
+          input={<OutlinedInput id="select-multiple-chip" label="Categories" />}
+          renderValue={(selected: string[]) => (
+            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+              {selected.map((categoryName) => (
+                <Chip key={categoryName} label={categoryName} />
+              ))}
+            </Box>
+          )}
+          MenuProps={MenuProps}
+        >
+          {allCategories.map((category) => (
+            <MenuItem key={category.id} value={category.name} style={getStyles(category.name, getSelectedCategoriesNames(), theme)}>
+              {category.name}
+            </MenuItem>
+          ))}
+        </Select>
       </FormControl>
       </Container>
+      <Box sx={{textAlign: 'right'}}>
+        <Button onClick={handleOpen} variant="outlined" sx={buttonBack}>
+            Add category
+        </Button>
+      </Box>
       <Box className={"input-file-box"}>
         <Input type="file" onChange={handleMainImageChange} id="file-input-main" disableUnderline sx={input}/>
         <label htmlFor="file-input-main">
-          <Button component="span" sx={buttonStyles}>
+          <Button component="span" sx={buttonStyles} style={{marginBottom: '10px'}}>
             Choose main photo
           </Button>
         </label>
       </Box>
       {mainImageUrl && (
-        <Box component="img" src={mainImageUrl} alt="Main Image" sx={mainImageStyle}/>
+        <Box component="img" src={mainImageUrl} alt="Main Image" sx={mainImageStyle} style={{marginLeft: '10px'}}/>
       )}
       <Box className={"input-file-box"}>
         <Input type="file" onChange={handleAdditionalImagesChange} id="file-input-additional" disableUnderline sx={input}/>
@@ -239,6 +346,31 @@ const AddProductForm: React.FC<AddProductFormProps> = ({onAddProduct}) => {
           Back
         </Link>
       </Button>
+      <Dialog open={open} onClose={handleClose} aria-labelledby="add-category-dialog-title">
+        <DialogTitle id="add-category-dialog-title">Add new category</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Input category name:
+          </DialogContentText>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="category"
+            label="Category"
+            type="text"
+            fullWidth
+            onChange={(event) => setNewCategory(event.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleAddNewCategory} color="primary">
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
     </form>
   );
 };

@@ -108,9 +108,9 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ filters}) => {
   return (
     <Box sx={{width: '100%', marginTop:'50px'}}>
       <Container maxWidth="lg">
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 2 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 2, marginRight:'80px' }}>
           <FormControl variant="outlined" size="small">
-            <Typography sx={{ marginRight: 1 }}>Sort by:</Typography>
+            <Typography sx={{ marginRight: 1, fontSize: '20px' }}>Sort by:</Typography>
             <Select
               value={sortOption}
               onChange={handleSortChange}

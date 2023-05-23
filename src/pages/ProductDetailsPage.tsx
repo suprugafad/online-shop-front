@@ -2,11 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import {Category, Product} from "../types";
-import {
-  Box,
-  CircularProgress,
-} from '@mui/material';
+import {Box, CircularProgress} from '@mui/material';
 import {ProductDetails} from "../components/catalog/ProductDetails";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
 
 export const ProductDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -32,6 +31,7 @@ export const ProductDetailsPage: React.FC = () => {
       setProduct({
         id: data._id,
         title: data._title,
+        manufacturer: data._manufacturer,
         description: data._description,
         price: data._price,
         amount: data._amount,
@@ -47,13 +47,25 @@ export const ProductDetailsPage: React.FC = () => {
 
   if (!product) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
-        <CircularProgress />
-      </Box>
+      <>
+
+        <Box display="flex" justifyContent="center" alignItems="center" height="100%">
+          <CircularProgress />
+        </Box>
+
+      </>
     );
   }
 
 
-  return <ProductDetails product={product} />;
+  return (
+    <>
+      <Header title={'GameScape'}></Header>
+      <Box height={'730px'}>
+        <ProductDetails product={product} />;
+      </Box>
+      <Footer></Footer>
+    </>
+  );
 
 };

@@ -42,6 +42,7 @@ const ProductTable: React.FC<ProductTableProps> = ({ productsTable, handleDelete
         return {
           id: product._id,
           title: product._title,
+          manufacturer: product._manufacturer,
           description: product._description,
           price: product._price,
           amount: product._amount,
@@ -88,30 +89,30 @@ const ProductTable: React.FC<ProductTableProps> = ({ productsTable, handleDelete
   };
 
   return (
-    <div>
+    <div  style={{width: '70%'}}>
       <TableContainer component={Paper}>
-        <Table>
+        <Table >
           <TableHead>
-            <TableRow>
-              <TableCell>Title</TableCell>
-              <TableCell>Description</TableCell>
-              <TableCell>Price</TableCell>
-              <TableCell>Amount</TableCell>
-              <TableCell>Actions</TableCell>
+            <TableRow style={{backgroundColor: '#ece8f5'}}>
+              <TableCell style={{textAlign: 'center'}}>Title</TableCell>
+              <TableCell style={{textAlign: 'center'}}>Manufacturer</TableCell>
+              <TableCell style={{textAlign: 'center'}}>Price</TableCell>
+              <TableCell style={{textAlign: 'center'}}>Amount</TableCell>
+              <TableCell style={{textAlign: 'center'}}>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {products.map((product) => (
               <TableRow key={product.id}>
-                <TableCell>{product.title}</TableCell>
-                <TableCell>{product.description}</TableCell>
-                <TableCell>{product.price}</TableCell>
-                <TableCell>{product.amount}</TableCell>
-                <TableCell>
+                <TableCell style={{textAlign: 'center'}}>{product.title}</TableCell>
+                <TableCell style={{textAlign: 'center'}}>{product.manufacturer}</TableCell>
+                <TableCell style={{textAlign: 'center'}}>{product.price}</TableCell>
+                <TableCell style={{textAlign: 'center'}}>{product.amount || 0}</TableCell>
+                <TableCell style={{textAlign: 'center'}}>
                   <Button variant="contained" color="primary" onClick={() => handleOpen(product)} style={{marginRight:"0.5rem"}}>
                     Edit
                   </Button>
-                  <Button variant="contained" color="secondary" onClick={() => handleDelete(product.id)}>
+                  <Button variant="outlined" color="secondary" onClick={() => handleDelete(product.id)}>
                     Delete
                   </Button>
                 </TableCell>

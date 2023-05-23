@@ -133,7 +133,7 @@ const Checkout: React.FC<CheckoutProps> = ({selectedCartItems, totalPrice}) => {
         <TableContainer component={Paper}>
           <Table aria-label="customized table">
             <TableHead>
-              <TableRow>
+              <TableRow style={{backgroundColor:'#ece8f5'}}>
                 <TableCell style={{fontSize: 'large', textAlign: 'center'}}>Product</TableCell>
                 <TableCell align="right" style={{fontSize: 'large', textAlign: 'center'}}>Amount</TableCell>
                 <TableCell align="right" style={{fontSize: 'large', textAlign: 'center'}}>Price</TableCell>
@@ -227,7 +227,7 @@ const Checkout: React.FC<CheckoutProps> = ({selectedCartItems, totalPrice}) => {
       </Grid>
 
       <Dialog open={open} onClose={handleClose} aria-labelledby="add-address-dialog-title">
-        <DialogTitle id="add-address-dialog-title">Добавить новый адрес</DialogTitle>
+        <DialogTitle id="add-address-dialog-title">Add new address</DialogTitle>
         <DialogContent>
           <DialogContentText>
             Input address info:

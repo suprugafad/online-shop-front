@@ -26,9 +26,10 @@ export const Profile: React.FC<ProfileProps> = ({user}) => {
 
     fetchData().catch(() => {
     });
-  }, []);
+  }, [currentUser]);
 
-  const handleUserUpdate = (updatedUser: IUser) => {
+  const handleUserUpdate = async (updatedUser: IUser) => {
+    await profileAPI.updateUserInfo(updatedUser);
     setCurrentUser(updatedUser);
   };
 

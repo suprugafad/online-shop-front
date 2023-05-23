@@ -11,6 +11,10 @@ import CartPage from "./pages/CartPage";
 import CheckoutPage from "./pages/CheckoutPage";
 import MainPage from "./pages/MainPage";
 import {ProfilePage} from "./pages/ProfilePage";
+import ChatWidget from "./components/ChatWidget";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
+import UsersPage from "./pages/UsersPage";
 
 function App() {
   return (
@@ -22,11 +26,14 @@ function App() {
         <Route path='/signin' element={<SignInPage />} />
         <Route path='/signup' element={<SignUpPage />} />
         <Route path='/addProduct' element={<AddProduct />} />
-        <Route path='/productPage' element={<ProductPage />}/>
+        <Route path='/products' element={<ProductPage />}/>
+        <Route path='/users' element={<UsersPage />}/>
         <Route path='/cart' element={<CartPage />}/>
         <Route path='/checkout' element={<CheckoutPage />}/>
         <Route path='/main' element={<MainPage />}/>
         <Route path='/profile' element={<ProfilePage />}/>
+        <Route path='/forgotPassword' element={<ForgotPasswordPage />}/>
+        <Route path='/resetPassword/:id/:resetToken' element={<ResetPasswordPage />}/>
       </Routes>
     </Router>
   );

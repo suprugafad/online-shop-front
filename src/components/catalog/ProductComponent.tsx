@@ -33,7 +33,7 @@ export const ProductComponent: React.FC<ProductCard> = ({id, title, price, mainI
               objectFit: 'contain',
             }}
           />
-          <CardContent>
+          <CardContent style={{backgroundColor: '#ece8f5', textAlign: 'center', marginTop:'10px', padding: '10px'}}>
             <Typography gutterBottom variant="h5" component="div">
               {title}
             </Typography>

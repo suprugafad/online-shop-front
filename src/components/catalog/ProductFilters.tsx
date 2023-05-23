@@ -1,6 +1,18 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
-import { Box, Button, Checkbox, FormControl, FormControlLabel, FormGroup, FormLabel, Slider, TextField, Typography, } from '@mui/material';
+import {
+  Box,
+  Button,
+  Checkbox,
+  Divider,
+  FormControl,
+  FormControlLabel,
+  FormGroup,
+  FormLabel,
+  Slider,
+  TextField,
+  Typography,
+} from '@mui/material';
 import { Filters } from "../../types";
 
 interface ProductFiltersProps {
@@ -86,10 +98,10 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({ filters, onFilte
   };
 
   return (
-    <Box style={{ width: '275px'}}>
-      <Box my={2}>
+    <Box style={{ width: '320px', padding: '20px', border: '1px solid #7E52A0', backgroundColor: '#f7f3fa', borderRadius: '10px'}}>
+      <Box my={2} marginTop={'0'}>
         <FormControl component="fieldset">
-          <FormLabel component="legend">Categories</FormLabel>
+          <FormLabel component="legend" style={{fontSize: '20px', marginBottom:'10px'}}>Categories</FormLabel>
           <FormGroup>
             {allCategories.map((category) => (
               <FormControlLabel
@@ -101,9 +113,10 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({ filters, onFilte
           </FormGroup>
         </FormControl>
       </Box>
+      <Divider />
       <Box my={2}>
         <FormControl component="fieldset">
-          <FormLabel component="legend">Manufactures</FormLabel>
+          <FormLabel component="legend" style={{fontSize: '20px', marginBottom:'10px'}}>Manufactures</FormLabel>
           <FormGroup>
             {allManufacturers.map((manufacturer) => (
               <FormControlLabel
@@ -115,8 +128,9 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({ filters, onFilte
           </FormGroup>
         </FormControl>
       </Box>
+      <Divider />
       <Box my={2}>
-        <Typography id="range-slider" gutterBottom>
+        <Typography id="range-slider" gutterBottom style={{fontSize: '20px', color: 'dimgrey'}}>
           Cost
         </Typography>
         <Slider

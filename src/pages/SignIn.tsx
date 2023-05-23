@@ -216,11 +216,10 @@ const SignInPage = () => {
                 <Stack sx={{ mt: '3rem', textAlign: 'center' }}>
                   <Typography sx={{ fontSize: '0.9rem', mb: '1rem' }}>
                     Need an account?{' '}
-                    <LinkItem to='/signup'>Sign up here</LinkItem>
+                    <LinkItem to='/signup' style={{color: '#6d3398'}}>Sign up here</LinkItem>
                   </Typography>
                   <Typography sx={{ fontSize: '0.9rem' }}>
-                    Forgot your{' '}
-                    <LinkItem to='/forgotPassword'>Forget password?</LinkItem>
+                    <LinkItem to='/forgotPassword' style={{color: '#6d3398'}}>Forgot password?</LinkItem>
                   </Typography>
                 </Stack>
               </Grid>

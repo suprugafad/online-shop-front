@@ -11,6 +11,17 @@ export async function checkAuthentication() {
   }
 }
 
+export async function checkAdmin() {
+  try {
+    const response = await axios.get('http://localhost:5000/api/auth/admin', { withCredentials: true });
+    console.log('admin', response);
+    return response;
+  } catch (error) {
+    console.error('Error checking authentication:', error);
+    return null;
+  }
+}
+
 export async function logout() {
   try {
     return await axios.post('http://localhost:5000/api/auth/logout',{}, { withCredentials: true });

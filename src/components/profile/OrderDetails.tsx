@@ -1,6 +1,6 @@
 import React from "react";
 import { IOrder } from "../../types";
-import { Dialog, DialogTitle, DialogContent, Typography, Stack, Button } from "@mui/material";
+import {Dialog, DialogTitle, DialogContent, Typography, Stack, Button, Box, Divider} from "@mui/material";
 
 interface OrderDetailsProps {
   open: boolean;
@@ -10,18 +10,29 @@ interface OrderDetailsProps {
 
 export const OrderDetails: React.FC<OrderDetailsProps> = ({ open, onClose, order }) => {
   return (
-    <Dialog open={open} onClose={onClose} fullWidth>
-      <DialogTitle>ORDER DETAILS</DialogTitle>
-      <DialogContent>
-        <Stack spacing={2}>
-          <Typography>#{order.id}</Typography>
-          <Typography>{order.status[0].toUpperCase() + order.status.slice(1)}</Typography>
-          <Typography>Created at: {order.createdAt}</Typography>
-          <Typography>Total price: {order.totalPrice}</Typography>
+    <Dialog open={open} onClose={onClose} fullWidth >
+      <DialogTitle style={{backgroundColor: '#7E52A0', color: 'white', textAlign:'center'}}>ORDER DETAILS</DialogTitle>
+      <DialogContent style={{backgroundColor: '#ece8f5', paddingTop: '20px'}}>
+        <Stack spacing={2} style={{width: '480px', margin: 'auto'}}>
+          <Typography style={{fontSize: '18px', textAlign: 'center'}}>#{order.id}</Typography>
+          <Divider/>
+          <Box style={{display: 'flex', justifyContent: "space-between", alignItems: "center"}}>
+            <Typography>Status: </Typography>
+            <Typography  color={'#6a278a'}>{order.status[0].toUpperCase() + order.status.slice(1)}</Typography>
+          </Box>
+          <Box style={{display: 'flex', justifyContent: "space-between", alignItems: "center"}}>
+            <Typography>Created at: </Typography>
+            <Typography color='#6a278a'>{order.createdAt}</Typography>
+          </Box>
+          <Box style={{display: 'flex', justifyContent: "space-between", alignItems: "center"}}>
+            <Typography>Total price: </Typography>
+            <Typography  color='#6a278a'>{order.totalPrice}</Typography>
+          </Box>
+          <Divider/>
           <Typography>Products:</Typography>
           <Stack spacing={1}>
             {order.products.map((item) => (
-              <Typography key={item.id}>
+              <Typography key={item.id}  color='#6a278a'>
                 {item.title} - ${item.price} (amount: {item.quantity})
               </Typography>
             ))}

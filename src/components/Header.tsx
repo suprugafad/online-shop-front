@@ -3,11 +3,11 @@ import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
-import {Link, useNavigate} from 'react-router-dom';
-import {checkAuthentication, getUserId, logout} from '../api/AuthAPI';
+import { Link, useNavigate } from 'react-router-dom';
+import { checkAuthentication, getUserId, logout } from '../api/AuthAPI';
 import { useEffect, useState } from "react";
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
-import {IUser} from "../types";
+import { IUser } from "../types";
 import profileAPI from "../api/ProfileAPI";
 
 interface HeaderProps {
@@ -74,9 +74,9 @@ const Header: React.FC<HeaderProps> = ({title}) => {
 
   return (
     <>
-      <AppBar position="static" color={'default'}>
+      <AppBar position="static" color={'primary'}>
         <Toolbar>
-          <Typography variant="h6" component="div" sx={{flexGrow: 1}}>
+          <Typography variant="h6" component={Link} to="/" style={{textDecoration: 'none', color: 'white'}} sx={{flexGrow: 1, marginLeft: '3%'}}>
             {title}
           </Typography>
           {!isAuthenticated && (
@@ -100,12 +100,12 @@ const Header: React.FC<HeaderProps> = ({title}) => {
               </Button>
             </>
           )}
-          <Button color="inherit">About shop</Button>
+          <Button color="inherit" sx={{marginRight: '5%'}}>About shop</Button>
         </Toolbar>
       </AppBar>
       <Dialog open={open} onClose={handleClose} aria-labelledby="alert-dialog-title"
               aria-describedby="alert-dialog-description">
-        <DialogTitle id="alert-dialog-title">Logout</DialogTitle>
+        <DialogTitle id="alert-dialog-title" style={{backgroundColor: '#7E52A0', color: 'white', marginBottom: '25px'}}>Logout</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
             Are you sure you want to log out?
@@ -115,7 +115,7 @@ const Header: React.FC<HeaderProps> = ({title}) => {
           <Button onClick={handleClose} color="primary">
             Cancel
           </Button>
-          <Button onClick={handleLogout} color="primary" autoFocus>
+          <Button onClick={handleLogout} color="primary" variant={'contained'} autoFocus>
             Logout
           </Button>
         </DialogActions>

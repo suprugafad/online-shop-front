@@ -6,7 +6,8 @@ export const centeredContainer = {
   display: "flex",
   flexDirection: "row",
   alignItems: "center",
-  justifyContent: "space-between"
+  justifyContent: "space-between",
+  marginTop: "15px"
 };
 
 export const IconButton = styled(MuiIconButton)({
@@ -58,30 +59,33 @@ export const deleteIconButton = {
 };
 
 export const submitButton = {
+  marginBottom: '1rem',
   py: '0.8rem',
   mt: 2,
   width: '100%',
   marginInline: 'auto',
-  backgroundColor: '#8840d7',
+  backgroundColor: '#7E52A0',
   "&:hover": {
-    backgroundColor: '#4f0f98',
+    backgroundColor: '#6d3398',
   },
   "&:focus": {
     outline: "none",
-  }
+  },
+  marginTop: '50px'
 }
 
 export const buttonStyles = {
   padding: "12px 24px",
-  backgroundColor: '#8840d7',
+  backgroundColor: '#7E52A0',
   color: "white",
+  marginTop: "10px",
   borderRadius: "4px",
   border: "none",
   cursor: "pointer",
   boxShadow: "0px 2px 2px rgba(0, 0, 0, 0.25)",
   transition: "background-color 0.2s ease-out",
   "&:hover": {
-   backgroundColor: '#4f0f98',
+   backgroundColor: '#6d3398',
   },
   "&:focus": {
     outline: "none",
@@ -89,17 +93,15 @@ export const buttonStyles = {
 };
 
 export const buttonBack = {
-  marginTop: '1rem',
-  padding: "12px 24px",
-  backgroundColor: '#dac6ee',
-  color: '#8840d7',
+  backgroundColor: '#ece8f5',
+  color: '#7E52A0',
   borderRadius: "4px",
   border: "none",
   cursor: "pointer",
   boxShadow: "0px 2px 2px rgba(0, 0, 0, 0.25)",
   transition: "background-color 0.2s ease-out",
   "&:hover": {
-    backgroundColor: '#bb8ee0',
+    backgroundColor: '#d1c4e1',
     border: "none",
   },
   "&:focus": {
