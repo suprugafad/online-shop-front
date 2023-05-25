@@ -11,10 +11,10 @@ import CartPage from "./pages/CartPage";
 import CheckoutPage from "./pages/CheckoutPage";
 import MainPage from "./pages/MainPage";
 import {ProfilePage} from "./pages/ProfilePage";
-import ChatWidget from "./components/ChatWidget";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import UsersPage from "./pages/UsersPage";
+import OrdersPage from "./pages/OrdersPage";
 
 function App() {
   return (
@@ -28,6 +28,7 @@ function App() {
         <Route path='/addProduct' element={<AddProduct />} />
         <Route path='/products' element={<ProductPage />}/>
         <Route path='/users' element={<UsersPage />}/>
+        <Route path='/orders' element={<OrdersPage />}/>
         <Route path='/cart' element={<CartPage />}/>
         <Route path='/checkout' element={<CheckoutPage />}/>
         <Route path='/main' element={<MainPage />}/>
