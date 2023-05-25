@@ -1,6 +1,6 @@
 import React from "react";
 import { IOrder } from "../../types";
-import {Dialog, DialogTitle, DialogContent, Typography, Stack, Button, Box, Divider} from "@mui/material";
+import {Dialog, DialogTitle, DialogContent, Typography, Stack, Button, Box, Divider, Grid} from "@mui/material";
 
 interface OrderDetailsProps {
   open: boolean;
@@ -30,15 +30,17 @@ export const OrderDetails: React.FC<OrderDetailsProps> = ({ open, onClose, order
           </Box>
           <Divider/>
           <Typography>Products:</Typography>
+
           <Stack spacing={1}>
             {order.products.map((item) => (
-              <Typography key={item.id}  color='#6a278a'>
-                {item.title} - ${item.price} (amount: {item.quantity})
-              </Typography>
+              <Stack key={item.id} direction="row" alignItems="center" spacing={1} style={{justifyContent: 'space-between'}}>
+                <Typography color='#6a278a'>
+                  {item.title} - ${item.price} (amount: {item.quantity})
+                </Typography>
+              <Button variant='outlined'>Leave review</Button>
+              </Stack>
             ))}
           </Stack>
-          {/*<Typography>Информация о доставке: {order.deliveryInfo}</Typography>*/}
-          {/*<Typography>Информация об оплате: {order.paymentInfo}</Typography>*/}
           <Button onClick={onClose}>Close</Button>
         </Stack>
       </DialogContent>

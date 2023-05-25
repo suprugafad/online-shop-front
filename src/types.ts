@@ -55,7 +55,7 @@ export interface IUser {
   role: string,
 }
 
-interface IOrderItem {
+export interface IOrderItem {
   id: number;
   title: string;
   price: number;
@@ -68,4 +68,46 @@ export interface IOrder {
   createdAt: string;
   totalPrice: number;
   products: IOrderItem[];
+}
+
+export interface IOrderTable {
+  id: number;
+  userId: number;
+  userEmail: string;
+  createdAt: string;
+  comment: string;
+  totalPrice: number;
+  status: string;
+  products: IOrderItem[];
+  address: string;
+  paymentMethod: string;
+  paymentStatus: string;
+}
+
+export interface IReview {
+  id: number;
+  userId: number;
+  productId: number;
+  comment: string;
+  rating: number;
+}
+
+export enum OrderStatus {
+  PENDING = 'PENDING',
+  CONFIRMED = 'CONFIRMED',
+  SHIPPED = 'SHIPPED',
+  DELIVERED = 'DELIVERED',
+  CANCELLED = 'CANCELLED',
+}
+
+export enum PaymentStatus {
+  PENDING = 'PENDING',
+  PAID = 'PAID',
+  CANCELLED = 'CANCELLED',
+}
+
+export enum PaymentMethod {
+  CASH = 'PENDING',
+  CREDIT_CARD = 'CREDIT_CARD',
+  PAYPAL = 'PAYPAL',
 }
