@@ -4,7 +4,7 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import {ProductFilters} from "../components/catalog/ProductFilters";
 import {Filters} from "../types";
-import {checkAdmin} from "../api/AuthAPI";
+import {checkAuthentication} from "../api/AuthAPI";
 import {Button, Container, Divider, Grid, Typography} from "@mui/material";
 import {Link} from "react-router-dom";
 import HeaderAdmin from "../components/admin/HeaderAdmin";
@@ -16,10 +16,10 @@ const StartPage = () => {
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await checkAdmin();
-        console.log(response)
+        const response = await checkAuthentication();
+        console.log(response?.data.role)
 
-        if (response && response.data.isAuthenticated) {
+        if (response && response.data.role === 'admin') {
           setIsAdmin(true);
         }
       } catch (error) {

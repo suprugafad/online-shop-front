@@ -17,8 +17,8 @@ export async function checkAdmin() {
     console.log('admin', response);
     return response;
   } catch (error) {
-    console.error('Error checking authentication:', error);
-    return null;
+    console.log('Error checking authentication:', error);
+    return false;
   }
 }
 
