@@ -1,8 +1,8 @@
 import {Box, CircularProgress, Grid, Stack, Typography} from "@mui/material";
-import {OrderCard} from "../profile/OrderCard";
+import {OrderCard} from "../../profile/OrderCard";
 import React, {useEffect, useState} from "react";
-import {IOrder, IUser} from "../../types";
-import profileAPI from "../../api/ProfileAPI";
+import {IOrder, IUser} from "../../../types";
+import profileAPI from "../../../api/ProfileAPI";
 
 interface UserOrdersFormProps {
   user: IUser;

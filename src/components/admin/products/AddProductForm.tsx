@@ -1,30 +1,18 @@
 import React, {FormEvent, useEffect, useState} from "react";
-import {
-  TextField,
-  Button,
-  FormControl,
-  Box,
-  Input,
-  IconButton,
-  Grid,
-  Container,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions, Dialog, InputLabel, MenuItem, Select, Chip, SelectChangeEvent
-} from "@mui/material";
+import { TextField, Button, FormControl, Box, Input, IconButton, Grid, Container,
+  DialogTitle, DialogContent, DialogContentText, DialogActions, Dialog,
+  InputLabel, MenuItem, Select, Chip, SelectChangeEvent } from "@mui/material";
 import OutlinedInput from '@mui/material/OutlinedInput';
 import { Theme } from '@mui/material/styles';
 import CloseIcon from '@mui/icons-material/Close';
 import axios from "axios";
-import { Category } from "../../types";
-import {
-  buttonStyles, submitButton, centeredContainer, formControl, input, buttonBack,
-  mainImageStyle, additionalImage, additionalImageWrapper, additionalImagesList, deleteIconButton, textField
-} from "../../styles/addProductFormStyles";
+import { Category } from "../../../types";
+import { buttonStyles, submitButton, centeredContainer, formControl, input, buttonBack,
+  mainImageStyle, additionalImage, additionalImageWrapper, additionalImagesList,
+  deleteIconButton, textField } from "../../../styles/addProductFormStyles";
 import { Link } from 'react-router-dom';
-import productAPI from "../../api/ProductAPI";
-import theme from "../../theme";
+import productAPI from "../../../api/ProductAPI";
+import theme from "../../../theme";
 
 interface AddProductFormProps {
   onAddProduct: (newProduct: any) => void;
@@ -342,7 +330,7 @@ const AddProductForm: React.FC<AddProductFormProps> = ({onAddProduct}) => {
         Add product
       </Button>
       <Button variant="outlined" sx={buttonBack}>
-        <Link to="/productPage" style={{ textDecoration: 'none', color: 'inherit' }}>
+        <Link to="/products" style={{ textDecoration: 'none', color: 'inherit' }}>
           Back
         </Link>
       </Button>

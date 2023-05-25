@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Modal
+  Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Modal, Grid, CircularProgress
 } from '@mui/material';
 import axios from 'axios';
 import UpdateProductForm from "./UpdateProductForm";
-import { Category, Product } from "../../types";
+import { Category, Product } from "../../../types";
 
 interface ProductTableProps {
   productsTable: Product[];
@@ -16,6 +16,7 @@ const ProductTable: React.FC<ProductTableProps> = ({ productsTable, handleDelete
   const [products, setProducts] = useState<Product[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [open, setOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     fetchProducts();
@@ -23,6 +24,7 @@ const ProductTable: React.FC<ProductTableProps> = ({ productsTable, handleDelete
 
   const fetchProducts = async () => {
     try {
+      setIsLoading(true);
       const response = await axios.get('http://localhost:5000/api/products');
       const productData = response.data.map(async (product: any) => {
         let categoryIdResponse;
@@ -55,6 +57,8 @@ const ProductTable: React.FC<ProductTableProps> = ({ productsTable, handleDelete
       const products = await Promise.all(productData);
 
       setProducts(products);
+
+      setIsLoading(false)
     } catch (error) {
       console.error(error);
     }
@@ -89,7 +93,13 @@ const ProductTable: React.FC<ProductTableProps> = ({ productsTable, handleDelete
   };
 
   return (
-    <div  style={{width: '70%'}}>
+    <div style={{width: '70%'}}>
+      {isLoading && (
+        <Grid style={{ width: '100%',height: '700px', display: 'flex', justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}>
+          <CircularProgress/>
+        </Grid>
+      )}
+      {!isLoading && (
       <TableContainer component={Paper}>
         <Table >
           <TableHead>
@@ -121,6 +131,7 @@ const ProductTable: React.FC<ProductTableProps> = ({ productsTable, handleDelete
           </TableBody>
         </Table>
       </TableContainer>
+        )}
 
       <Modal open={open} onClose={handleClose} style={{
         display: 'flex',

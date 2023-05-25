@@ -1,10 +1,25 @@
 import React, { useState, useEffect, FormEvent } from 'react';
-import { TextField, Button, FormControl, FormLabel, FormGroup, FormControlLabel, Checkbox, IconButton } from '@mui/material';
+import {
+  TextField,
+  Button,
+  FormControl,
+  FormLabel,
+  FormGroup,
+  FormControlLabel,
+  Checkbox,
+  IconButton,
+  Box, Input
+} from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import axios from 'axios';
 import { flexbox } from "@mui/system";
-import { Product, Category } from "../../types";
-import {textField} from "../../styles/addProductFormStyles";
+import { Product, Category } from "../../../types";
+import {
+  additionalImage, additionalImagesList,
+  additionalImageWrapper, buttonStyles,
+  deleteIconButton, input, mainImageStyle,
+  textField
+} from "../../../styles/addProductFormStyles";
 
 const styles = {
   inputFile: {
@@ -161,7 +176,6 @@ const UpdateProductForm: React.FC<UpdateProductFormProps> = ({ product, onUpdate
 
   const handleCategoryChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const categoryId = parseInt(event.target.value);
-    console.log(categoryId)
     if (selectedCategories && selectedCategories.includes(categoryId)) {
       setSelectedCategories(selectedCategories.filter(id => id !== categoryId));
     } else {
@@ -217,14 +231,14 @@ const UpdateProductForm: React.FC<UpdateProductFormProps> = ({ product, onUpdate
         value={title}
         onChange={handleTitleChange}
         fullWidth
-        style={{marginBottom: "1rem"}}
+        sx={textField}
       />
       <TextField
         label="Description"
         value={description}
         onChange={handleDescriptionChange}
         fullWidth
-        style={{marginBottom: "1rem"}}
+        sx={textField}
         autoComplete="off"
       />
       <TextField
@@ -233,7 +247,7 @@ const UpdateProductForm: React.FC<UpdateProductFormProps> = ({ product, onUpdate
         value={price}
         onChange={handlePriceChange}
         fullWidth
-        style={{marginBottom: "1rem"}}
+        sx={textField}
       />
       <TextField
         label="Amount"
@@ -261,33 +275,45 @@ const UpdateProductForm: React.FC<UpdateProductFormProps> = ({ product, onUpdate
           ))}
         </FormGroup>
       </FormControl>
-      <input style={styles.inputFile} type="file" onChange={handleMainImageChange}/>
-      {(mainImage || mainImageUrl) && (
-        <img
-          src={mainImageUrl ?? undefined}
-          alt="Main Image"
-          style={{maxWidth: "30%", marginBottom: "1rem", borderRadius: "0.25rem"}}
-        />
+      <Box className={"input-file-box"}>
+        <Input type="file" onChange={handleMainImageChange} id="file-input-main" disableUnderline sx={input}/>
+        <label htmlFor="file-input-main">
+          <Button component="span" sx={buttonStyles} style={{marginBottom: '10px'}}>
+            Choose main photo
+          </Button>
+        </label>
+      </Box>
+      {mainImageUrl && (
+        <Box style={{width: '150px', display:'flex', alignItems: 'center', justifyContent: 'center', marginTop: '10px'}}>
+          <Box component="img" src={mainImageUrl} alt="Main Image" sx={mainImageStyle} style={{marginLeft: '10px', maxWidth: '100px', objectFit: 'contain',}}/>
+        </Box>
       )}
-      <input style={styles.inputFile} type="file" multiple onChange={handleAdditionalImagesChange}/>
-      <div style={{ display: "flex", flexWrap: "wrap" }}>
-        {additionalImages && additionalImages.map((url, index) => (
-          <div key={index} style={{position: 'relative', maxWidth: "30%", margin: "0.5rem"}}>
-            <img
+      <Box className={"input-file-box"}>
+        <Input type="file" onChange={handleAdditionalImagesChange} id="file-input-additional" disableUnderline sx={input}/>
+        <label htmlFor="file-input-additional">
+          <Button component="span" sx={buttonStyles}>
+            Choose additional photos
+          </Button>
+        </label>
+      </Box>
+      <Box sx={additionalImagesList}>
+        {additionalImages.map((url, index) => (
+          <Box key={index} sx={additionalImageWrapper}  >
+            <Box
+              marginTop={'20px'}
+              component="img"
               key={index}
               src={url}
               alt={`Additional Image ${index + 1}`}
-              style={{maxWidth: "100%", marginBottom: "1rem", borderRadius: "0.25rem"}}
+              sx={additionalImage}
+              style={{width: '150px', height:'150px', textAlign: 'center', objectFit: 'contain',}}
             />
-            <IconButton
-              style={{position: 'absolute', top: '0.25rem', right: '0.25rem', backgroundColor: "white"}}
-              onClick={() => handleDeleteImage(index)}
-            >
+            <IconButton sx={deleteIconButton} onClick={() => handleDeleteImage(index)}>
               <CloseIcon/>
             </IconButton>
-          </div>
+          </Box>
         ))}
-      </div>
+      </Box>
       <Button type="submit" variant="contained" sx={{ py: '0.8rem', mt: 2, width: '100%', marginInline: 'auto' }}>
         Update product
       </Button>

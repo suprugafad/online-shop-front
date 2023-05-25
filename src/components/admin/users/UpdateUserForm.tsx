@@ -1,7 +1,7 @@
 import React, { useState, useEffect, FormEvent } from 'react';
 import { TextField, Button } from '@mui/material';
 import axios from 'axios';
-import {IUser} from "../../types";
+import {IUser} from "../../../types";
 
 interface UpdateUserFormProps {
   user: IUser;
