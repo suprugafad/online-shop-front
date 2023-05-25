@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { IUser } from "../types";
-import UsersTable from "../components/admin/UsersTable";
+import UsersTable from "../components/admin/users/UsersTable";
 import HeaderAdmin from "../components/admin/HeaderAdmin";
 import Footer from "../components/Footer";
 
