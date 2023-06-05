@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import {
   Grid, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button,
-  DialogTitle, DialogContent, DialogContentText, DialogActions, Dialog, Checkbox
+  DialogTitle, DialogContent, DialogContentText, DialogActions, Dialog, Checkbox, Box, Snackbar, Alert
 } from "@mui/material";
 import { ICartItem } from "../../types";
 import CartItem from "./CartItem";
 import CartAPI from "../../api/CartAPI";
 import { getUserId } from "../../api/AuthAPI";
 import QuantityInput from "./QuantityInput";
-import {useNavigate} from "react-router-dom";
+import {Link, useLocation, useNavigate} from "react-router-dom";
 
 const CartApi = new CartAPI();
 
@@ -16,8 +16,18 @@ const Cart = () => {
   const [cartItems, setCartItems] = useState<ICartItem[]>([]);
   const [open, setOpen] = useState(false);
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
 
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const successMessage = location.state && location.state.successMessage;
+
+  useEffect(() => {
+    if (successMessage) {
+      setSnackbarOpen(true);
+    }
+  }, [successMessage]);
 
   function calculateTotal(cartItems: ICartItem[]) {
     let total = 0;
@@ -75,7 +85,11 @@ const Cart = () => {
   };
 
   const checkoutHandler = async () => {
-    const selectedCartItems = cartItems.filter(item => selectedItems.includes(item.id));
+    let selectedCartItems = cartItems.filter(item => selectedItems.includes(item.id));
+    if (selectedCartItems.length === 0) {
+      selectedCartItems = cartItems;
+    }
+
     const totalPrice = calculateTotal(cartItems);
 
     navigate('/checkout', {state: {selectedCartItems, totalPrice}});
@@ -131,13 +145,24 @@ const Cart = () => {
     }
   }
 
+  if (cartItems.length === 0) {
+    return (
+      <Box minHeight='650px' display='flex' alignItems='center' justifyContent='center'>
+        <Box textAlign='center'>
+        <Typography variant="h4"> Yours cart is empty </Typography>
+        <Button component={Link} to='/catalog' variant={'contained'} style={{fontSize: '20px', marginTop: '40px'}}>Go to catalog</Button>
+        </Box>
+      </Box>
+    )
+  }
+
   return (
-    <Grid container spacing={2} style={{display: 'flex', justifyContent: 'right'}}>
+    <Grid container spacing={2} minHeight='630px' style={{display: 'flex', justifyContent: 'right', marginTop: '10px'}}>
       <Grid item xs={12}>
         <TableContainer component={Paper}>
           <Table>
             <TableHead>
-              <TableRow>
+              <TableRow style={{backgroundColor: '#ede3fc'}}>
                 <TableCell style={{textAlign: 'center'}}></TableCell>
                 <TableCell style={{fontSize: 'large', textAlign: 'center'}}>Product</TableCell>
                 <TableCell align="right" style={{fontSize: 'large', textAlign: 'center'}}>Amount</TableCell>
@@ -156,25 +181,20 @@ const Cart = () => {
                     <CartItem item={item} removeFromCartHandler={removeFromCartHandler}/>
                   </TableCell>
                   <TableCell align="right" style={{fontSize: 'large', textAlign: 'center'}}>
-                    <QuantityInput item={item}
-                                   onChange={(item: ICartItem, newQuantity: number) => handleQuantityChange(item, newQuantity)}/>
+                    <QuantityInput item={item} onChange={(item: ICartItem, newQuantity: number) => handleQuantityChange(item, newQuantity)}/>
                   </TableCell>
-                  <TableCell align="right" style={{
-                    fontSize: 'large',
-                    textAlign: 'center'
-                  }}>{(Number(item.product.price) * item.quantity)}$</TableCell>
+                  <TableCell align="right" style={{fontSize: 'large', textAlign: 'center'}}>{(Number(item.product.price) * item.quantity)}$</TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
         </TableContainer>
       </Grid>
-      <Grid item xs={12}
-            style={{display: 'flex', justifyContent: 'space-between', maxWidth: '350px', alignItems: 'center'}}>
+      <Grid item xs={12} style={{display: 'flex', justifyContent: 'space-between', maxWidth: '350px', alignItems: 'center'}}>
         <Typography variant="h6">Total {calculateTotalAmount(cartItems)} items </Typography>
         <Typography variant="h4"> {calculateTotal(cartItems)}$</Typography>
       </Grid>
-      <Grid item xs={12} style={{display: 'flex', justifyContent: 'space-between'}}>
+      <Grid item xs={12} style={{display: 'flex', justifyContent: 'space-between', height: '70px'}}>
         <Button variant="outlined" color="primary" disabled={!(cartItems.length > 0)} onClick={handleOpen}>
           Clear cart
         </Button>
@@ -202,6 +222,20 @@ const Cart = () => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      <Snackbar
+        open={snackbarOpen}
+        onClose={() => setSnackbarOpen(false)}
+        autoHideDuration={3000}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left',
+        }}
+      >
+        <Alert onClose={() => setSnackbarOpen(false)} severity="success" sx={{ width: '100%' }}>
+          Order successfully placed
+        </Alert>
+      </Snackbar>
     </Grid>
   );
 };
