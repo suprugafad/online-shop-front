@@ -5,9 +5,6 @@ import Footer from "../components/Footer";
 import {ProductFilters} from "../components/catalog/ProductFilters";
 import {Filters} from "../types";
 import {checkAuthentication} from "../api/AuthAPI";
-import {Button, Container, Divider, Grid, Typography} from "@mui/material";
-import {Link} from "react-router-dom";
-import HeaderAdmin from "../components/admin/HeaderAdmin";
 
 const StartPage = () => {
   const [filter, setFilter] = useState<Filters>({categories: [], manufacturers: [], priceRange: [0, 1000]});
@@ -62,44 +59,7 @@ const StartPage = () => {
           </div>
         </>
       )}
-      {isAdmin && (
-        <>
-          <HeaderAdmin title="GameScape"/>
-          <Container maxWidth="lg" style={{marginTop: '80px', marginBottom: '400px'}}>
-            <Typography variant="h4" component="h1" align="center" gutterBottom marginBottom='40px'>
-              Admin panel
-            </Typography>
-            <Divider/>
-            <Grid container spacing={3} style={{marginTop: '40px'}}>
-              <Grid item xs={12} sm={4}>
-                <Button component={Link} to="/statistics" variant="contained" color="primary" fullWidth style={{height: '60px', fontSize: '20px'}}>
-                  Statistics
-                </Button>
-              </Grid>
-              <Grid item xs={12} sm={4}>
-                <Button component={Link} to="/users" variant="contained" color="primary" fullWidth style={{height: '60px', fontSize: '20px'}}>
-                  Users
-                </Button>
-              </Grid>
-              <Grid item xs={12} sm={4}>
-                <Button component={Link} to="/orders" variant="contained" color="primary" fullWidth style={{height: '60px', fontSize: '20px'}}>
-                  Orders
-                </Button>
-              </Grid>
-              <Grid item xs={12} sm={4}>
-                <Button component={Link} to="/products" variant="contained" color="primary" fullWidth style={{height: '60px', fontSize: '20px'}}>
-                  Products
-                </Button>
-              </Grid>
-              <Grid item xs={12} sm={4}>
-                <Button component={Link} to="/content" variant="contained" color="primary" fullWidth style={{height: '60px', fontSize: '20px'}}>
-                  Content
-                </Button>
-              </Grid>
-            </Grid>
-          </Container>
-        </>
-      )}
+
       <Footer/>
     </>
   );

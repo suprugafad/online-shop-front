@@ -25,13 +25,13 @@ const Header: React.FC<HeaderProps> = ({title}) => {
     async function fetchData() {
       try {
         const response = await checkAuthentication();
-        console.log(response)
 
         if (response && response.data.isAuthenticated) {
           setIsAuthenticated(true);
+
           const userId = await getUserId();
           const user = await profileAPI.fetchUserInfo(userId);
-          console.log(user)
+
           setUser(user);
         }
       } catch (error) {
@@ -40,7 +40,7 @@ const Header: React.FC<HeaderProps> = ({title}) => {
       }
     }
 
-    fetchData();
+    fetchData().catch(() => {});
   }, []);
 
   const handleLogout = async () => {
@@ -79,6 +79,7 @@ const Header: React.FC<HeaderProps> = ({title}) => {
           <Typography variant="h6" component={Link} to="/" style={{textDecoration: 'none', color: 'white'}} sx={{flexGrow: 1, marginLeft: '3%'}}>
             {title}
           </Typography>
+          <Button color="inherit" component={Link} to="/catalog" sx={{}}>Catalog</Button>
           {!isAuthenticated && (
             <>
               <Button component={Link} to="/signin" color="inherit">
@@ -100,7 +101,7 @@ const Header: React.FC<HeaderProps> = ({title}) => {
               </Button>
             </>
           )}
-          <Button color="inherit" sx={{marginRight: '5%'}}>About shop</Button>
+          <Button component={Link} to="/aboutShop" color="inherit" sx={{marginRight: '5%'}}>About shop</Button>
         </Toolbar>
       </AppBar>
       <Dialog open={open} onClose={handleClose} aria-labelledby="alert-dialog-title"
@@ -115,7 +116,7 @@ const Header: React.FC<HeaderProps> = ({title}) => {
           <Button onClick={handleClose} color="primary">
             Cancel
           </Button>
-          <Button onClick={handleLogout} color="primary" variant={'contained'} autoFocus>
+          <Button onClick={handleLogout} component={Link} to="/" color="primary" variant={'contained'} autoFocus>
             Logout
           </Button>
         </DialogActions>

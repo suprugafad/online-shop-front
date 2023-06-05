@@ -15,6 +15,8 @@ import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import UsersPage from "./pages/UsersPage";
 import OrdersPage from "./pages/OrdersPage";
+import ShopPage from "./pages/AboutShopPage";
+import PaymentPage from "./pages/PaymentPage";
 
 function App() {
   return (
@@ -22,7 +24,7 @@ function App() {
       <CssBaseline />
       <Routes>
         <Route path="/product/:id" element={<ProductDetailsPage />} />
-        <Route path="/" element={<StartPage />} />
+        <Route path="/catalog" element={<StartPage />} />
         <Route path='/signin' element={<SignInPage />} />
         <Route path='/signup' element={<SignUpPage />} />
         <Route path='/addProduct' element={<AddProduct />} />
@@ -31,10 +33,12 @@ function App() {
         <Route path='/orders' element={<OrdersPage />}/>
         <Route path='/cart' element={<CartPage />}/>
         <Route path='/checkout' element={<CheckoutPage />}/>
-        <Route path='/main' element={<MainPage />}/>
+        <Route path='/' element={<MainPage />}/>
         <Route path='/profile' element={<ProfilePage />}/>
         <Route path='/forgotPassword' element={<ForgotPasswordPage />}/>
         <Route path='/resetPassword/:id/:resetToken' element={<ResetPasswordPage />}/>
+        <Route path='/aboutShop' element={<ShopPage />}/>
+        <Route path='/payment' element={<PaymentPage />}/>
       </Routes>
     </Router>
   );

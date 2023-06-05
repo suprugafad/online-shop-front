@@ -36,6 +36,7 @@ export async function getUserId() {
     const response = await axios.get('http://localhost:5000/api/auth/userId', { withCredentials: true });
     return response.data.userId;
   } catch (error) {
+    console.log('errrrrrrroooooorrrr')
     console.error(error);
     return [];
   }

@@ -16,6 +16,8 @@ const HeaderAdmin: React.FC<HeaderProps> = ({title}) => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [open, setOpen] = useState(false);
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     async function fetchData() {
       try {
@@ -41,6 +43,7 @@ const HeaderAdmin: React.FC<HeaderProps> = ({title}) => {
         if (auth) {
           setIsAdmin(auth.data.isAuthenticated);
           setOpen(false);
+          navigate('/');
         }
       } else {
         throw new Error('Logout failed');
