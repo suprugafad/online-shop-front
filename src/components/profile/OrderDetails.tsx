@@ -1,6 +1,7 @@
 import React from "react";
 import { IOrder } from "../../types";
 import {Dialog, DialogTitle, DialogContent, Typography, Stack, Button, Box, Divider, Grid} from "@mui/material";
+import {Link} from "react-router-dom";
 
 interface OrderDetailsProps {
   open: boolean;
@@ -18,7 +19,7 @@ export const OrderDetails: React.FC<OrderDetailsProps> = ({ open, onClose, order
           <Divider/>
           <Box style={{display: 'flex', justifyContent: "space-between", alignItems: "center"}}>
             <Typography>Status: </Typography>
-            <Typography  color={'#6a278a'}>{order.status[0].toUpperCase() + order.status.slice(1)}</Typography>
+            <Typography color={'#6a278a'}>{order.status[0].toUpperCase() + order.status.slice(1)}</Typography>
           </Box>
           <Box style={{display: 'flex', justifyContent: "space-between", alignItems: "center"}}>
             <Typography>Created at: </Typography>
@@ -37,7 +38,9 @@ export const OrderDetails: React.FC<OrderDetailsProps> = ({ open, onClose, order
                 <Typography color='#6a278a'>
                   {item.title} - ${item.price} (amount: {item.quantity})
                 </Typography>
-              <Button variant='outlined'>Leave review</Button>
+                { order.status.toLowerCase() === 'delivered' &&
+                  <Button variant='outlined' component={Link} to={`/product/${item.id}`}>Leave review</Button>
+                }
               </Stack>
             ))}
           </Stack>

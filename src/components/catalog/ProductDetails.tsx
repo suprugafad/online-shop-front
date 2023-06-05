@@ -1,40 +1,68 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import {Button, Typography, Box, Divider} from '@mui/material';
-import { NavigateBefore, NavigateNext } from '@mui/icons-material';
-import { Product, Category } from '../../types';
+import {Button, Typography, Box, Divider, Modal} from '@mui/material';
+import {NavigateBefore, NavigateNext} from '@mui/icons-material';
+import {Product, Category, IReview} from '../../types';
+import {Rating} from "@mui/material";
+import ReviewForm from "../reviews/ReviewForm";
+import reviewApi from "../../api/ReviewApi";
+import EditReviewForm from "../reviews/UpdateReviewForm";
+import productAPI from "../../api/ProductAPI";
 
 type ProductDetailsProps = {
   product: Product;
+  userId: number;
 };
 
-export const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
+export const ProductDetails: React.FC<ProductDetailsProps> = ({ product, userId }) => {
   const [productCategories, setProductCategories] = useState<Category[]>([]);
   const isAvailable = product.amount > 0;
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [reviews, setReviews] = useState<IReview[]>([]);
+  const [open, setOpen] = useState<boolean>(false);
+  const [openEdit, setOpenEdit] = useState<boolean>(false);
+  const [availableToLeave, setAvailableToLeave] = useState<boolean>(false);
+  const [review, setReview] = useState<IReview | null>(null);
+  const [availableToEdit, setAvailableToEdit] = useState<boolean>(false);
 
   useEffect(() => {
-    fetchProductCategories(product.id).catch(() => {});
+    fetchProductCategories().catch(() => {});
+    fetchProductReviews().catch(() => {});
+    fetchLeavingComment().catch(() => {});
   }, [product.id]);
 
-  const fetchProductCategories = async (productId: number) => {
+  const fetchLeavingComment = async () => {
     try {
-      const categoryIds = await axios.get(`http://localhost:5000/api/productCategories/product_id/${productId}`);
-      const productCategories = categoryIds.data.map((categoryId: any) => categoryId._categoryId);
+      const leave = await reviewApi.isUserBoughtProduct(product.id, userId);
 
-      const categories: Category[] = [];
+      if (leave) {
+        const review = await reviewApi.fetchProductReviewsByUserId(product.id, userId);
 
-      for (const id of productCategories) {
-        const response = await axios.get(`http://localhost:5000/api/categories/${id}`);
-        const category = {id: response.data._id, name: response.data._name};
-
-        categories.push(category);
+        if (review && review.id) {
+          setReview(review);
+          setAvailableToLeave(false);
+          setAvailableToEdit(true);
+        } else {
+          setAvailableToLeave(true);
+        }
       }
 
-      setProductCategories(categories);
     } catch (error) {
       console.error(error);
     }
+  }
+
+  const fetchProductCategories = async () => {
+    const categories = await productAPI.getProductCategories(product.id);
+
+    if (categories) {
+      setProductCategories(categories);
+    }
+  };
+
+  const fetchProductReviews = async () => {
+    const reviews = await reviewApi.getProductReviews(product.id);
+    setReviews(reviews);
   };
 
   const handlePrevImage = () => {
@@ -49,47 +77,77 @@ export const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
     setActiveImageIndex(index);
   };
 
-  const handleAddToCart = async () => {
-    try {
-      const userData = await axios.get('http://localhost:5000/api/auth/userId', { withCredentials: true });
-      const userId = userData.data.userId;
-      const response = await axios.get(`http://localhost:5000/api/carts/${userId}`, { withCredentials: true });
-      await axios.post(`http://localhost:5000/api/cartItems`, {
-        productId: product.id,
-        cartId: response.data._id,
-        quantity: 1,
-      }, { withCredentials: true });
+  const handleOpen = () => {
+    setOpen(true);
+  };
 
+  const handleClose = () => {
+    setOpen(false);
+    fetchProductReviews().catch(() => {});
+    fetchLeavingComment().catch(() => {});
+  };
+
+  const handleAddToCart = async () => {
+    await productAPI.addToCart(product.id);
+  };
+
+  const handleUpdate = async (updatedReview: Partial<IReview>) => {
+    try {
+      await axios.put(`http://localhost:5000/api/reviews/${updatedReview.id}`, updatedReview);
+
+      fetchProductReviews().catch(() => {});
+      fetchLeavingComment().catch(() => {});
+
+      handleCloseEdit();
     } catch (error) {
       console.error(error);
     }
+  };
+
+  const handleCloseAddReview = () => {
+    setOpen(false);
+    fetchProductReviews().catch(() => {});
+    fetchLeavingComment().catch(() => {});
+  }
+
+  function handleOpenEdit() {
+    setOpenEdit(true);
+  }
+
+  function handleCloseEdit() {
+    setOpenEdit(false);
+    fetchProductReviews().catch(() => {});
+    fetchLeavingComment().catch(() => {});
+  }
+
+  const renderReviews = () => {
+    if (!reviews || reviews.length === 0) {
+      return <Typography variant="body2" color="text.secondary" marginTop={'10px'}>No reviews available</Typography>;
+    }
+
+    return reviews.map((review) => (
+      <div key={review.id} style={{border: 'solid 2px #7E52A0', width: '600px', borderRadius: '10px', padding: '15px', margin: '20px 0 20px 0', backgroundColor: 'rgb(247,245,253)'}}>
+        <Rating value={review.rating} readOnly />
+        <Box style={{display: "flex", justifyContent: 'space-between'}}>
+          <Typography variant="body1" color="text.secondary">User #{review.userId}</Typography>
+          <Typography variant="body1" color="text.secondary">01.10.1001</Typography>
+        </Box>
+        <Divider/>
+        <Typography variant="body1" color="text.primary" style={{marginTop: '10px'}}>{review.comment}</Typography>
+      </div>
+    ));
   };
 
   const renderThumbnails = () => {
     if (!product.additionalImages || product.additionalImages.length === 0) {
       return null;
     }
+
     const images = [product.mainImageUrl, ...product.additionalImages || []].map((img, index) => (
-      <div
-        key={`thumbnail-${index}`}
-        style={{
-        height: '65px',
-        width: '65px',
-        margin: '5px',
-        cursor: 'pointer',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        border: activeImageIndex === index ? '2px solid #7E52A0' : 'none',
-          borderRadius: '5px'
-      }} onClick={() => handleThumbnailClick(index)}>
-        <img
-          src={img === product.mainImageUrl ? img : `http://localhost:5000/assets/images/products/${product.title}/${img}`}
-          alt={`${product.title}-${img}`}
-          style={{
-            maxHeight: '60px',
-            maxWidth: '60px',
-            objectFit: 'contain',
+      <div key={`thumbnail-${index}`} style={{height: '65px', width: '65px', margin: '5px', cursor: 'pointer', display: 'flex', justifyContent: 'center',
+        alignItems: 'center', border: activeImageIndex === index ? '2px solid #7E52A0' : 'none', borderRadius: '5px'}} onClick={() => handleThumbnailClick(index)}>
+        <img src={img === product.mainImageUrl ? img : `http://localhost:5000/assets/images/products/${product.title}/${img}`}
+          alt={`${product.title}-${img}`} style={{maxHeight: '60px', maxWidth: '60px', objectFit: 'contain',
           }}
         />
       </div>
@@ -102,8 +160,7 @@ export const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
 
   const renderCarousel = () => {
     const images = [product.mainImageUrl, ...product.additionalImages || []].map((img, index) => (
-      <img
-        key={`image-${index}`}
+      <img key={`image-${index}`}
         src={img === product.mainImageUrl ? img : `http://localhost:5000/assets/images/products/${product.title}/${img}`}
         alt={`${product.title}-${img}`}
         style={{ display: index === activeImageIndex ? 'block' : 'none', maxHeight: '400px', maxWidth: '400px', objectFit: 'contain' }}
@@ -112,60 +169,18 @@ export const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
 
     return (
       <Box position="relative" sx={{"justifyContent": 'center', "alignItems": "center", "display": "fex"}}>
-        <Box
-          maxWidth="70%"
-          sx={{
-            width: '400px',
-            height: '400px',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-        >
+        <Box maxWidth="70%" sx={{width: '400px', height: '400px', display: 'flex', justifyContent: 'center', alignItems: 'center',}}>
           {images}
           {hasAdditionalImages && (
             <>
-              <div
-                onClick={handlePrevImage}
-                style={{
-                  position: 'absolute',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  top: '50%',
-                  left: 0,
-                  transform: 'translateY(-50%)',
-                  zIndex: 1,
-                  backgroundColor: 'rgba(126,82,160,0.49)',
-                  cursor: 'pointer',
-                  padding: '10px',
-                  borderRadius: '50%',
-                  width: '40px',
-                  height: '40px',
-                  textAlign: 'center'
-                }}
-              >
+              <div onClick={handlePrevImage} style={{position: 'absolute', display: 'flex', alignItems: 'center', justifyContent: 'center', top: '50%', left: 0, transform: 'translateY(-50%)',
+                  zIndex: 1, backgroundColor: 'rgba(126,82,160,0.49)', cursor: 'pointer', padding: '10px', borderRadius: '50%', width: '40px', height: '40px', textAlign: 'center'}}>
                 <NavigateBefore />
               </div>
               <div
                 onClick={handleNextImage}
-                style={{
-                  position: 'absolute',
-                  display: 'flex',
-                  alignItems: 'center',
-                  top: '50%',
-                  right: 0,
-                  transform: 'translateY(-50%)',
-                  zIndex: 1,
-                  backgroundColor: 'rgba(126,82,160,0.49)',
-                  cursor: 'pointer',
-                  padding: '10px',
-                  borderRadius: '50%',
-                  width: '40px',
-                  height: '40px',
-                  textAlign: 'center'
-                }}
-              >
+                style={{ position: 'absolute', display: 'flex', alignItems: 'center', top: '50%', right: 0, transform: 'translateY(-50%)', zIndex: 1, backgroundColor: 'rgba(126,82,160,0.49)',
+                  cursor: 'pointer', padding: '10px', borderRadius: '50%', width: '40px', height: '40px', textAlign: 'center'}}>
                 <NavigateNext />
               </div>
             </>
@@ -176,42 +191,79 @@ export const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
   };
 
   return (
-    <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: '100px', marginLeft: '30px', marginRight:'30px' }}>
-      <div style={{ flex: '0 0 40%', marginRight: '50px' }}>
-        {renderCarousel()}
-        {renderThumbnails()}
-      </div>
-      <div style={{ flex: '0 0 50%' }}>
-        <Typography gutterBottom variant="h5" component="div">
-          {product.title}
-        </Typography>
-        <Divider/>
-        <Box mt={2}>
-          <Typography variant="h6" color="text.primary">
-            ${product.price.toFixed(2)}
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            {isAvailable ? 'In stock' : 'Out of stock'}
-          </Typography>
+    <>
+      <Box>
+        <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: '100px', marginLeft: '30px', marginRight:'30px' }}>
+          <div style={{ flex: '0 0 40%', marginRight: '50px' }}>
+            {renderCarousel()}
+            {renderThumbnails()}
+          </div>
+          <div style={{ flex: '0 0 50%' }}>
+            <Typography gutterBottom variant="h5" component="div">
+              {product.title}
+            </Typography>
+            <Divider/>
+            <Box mt={2}>
+              <Typography variant="h6" color="text.primary">
+                ${product.price.toFixed(2)}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {isAvailable ? 'In stock' : 'Out of stock'}
+              </Typography>
+            </Box>
+            <Box mt={2}>
+              <Typography variant="subtitle1" color="text.primary">
+                Categories:
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {productCategories.map((category) => category.name).join(', ')}
+              </Typography>
+            </Box>
+            <Box mt={2}>
+              <Button variant="contained" color="primary" disabled={!isAvailable} onClick={handleAddToCart}>
+                Add to cart
+              </Button>
+            </Box>
+            <Divider style={{marginTop: '15px'}}/>
+            <Typography variant="body1" color="text.secondary" style={{marginTop: '20px', textAlign:'justify'}}>
+              {product.description}
+            </Typography>
+          </div>
         </Box>
-        <Box mt={2}>
-          <Typography variant="subtitle1" color="text.primary">
-            Categories:
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            {productCategories.map((category) => category.name).join(', ')}
-          </Typography>
+        <Box style={{margin: '100px 100px 50px 100px' }}>
+          <Box style={{display: 'flex', justifyContent: 'space-between', marginBottom: '15px'}}>
+            <Typography gutterBottom variant="h5" component="div">
+              Reviews
+            </Typography>
+            <Box >
+              <Button variant="contained" color="primary" disabled={!availableToLeave} onClick={handleOpen} style={{marginRight: '30px'}}>
+                Leave review
+              </Button>
+              <Button variant="contained" color="primary" disabled={!availableToEdit} onClick={handleOpenEdit}>
+                Edit review
+              </Button>
+            </Box>
+          </Box>
+          <Divider></Divider>
+          {renderReviews()}
         </Box>
-        <Box mt={2}>
-          <Button variant="contained" color="primary" disabled={!isAvailable} onClick={handleAddToCart}>
-            Add to cart
-          </Button>
-        </Box>
-        <Divider style={{marginTop: '15px'}}/>
-        <Typography variant="body1" color="text.secondary" style={{marginTop: '20px', textAlign:'justify'}}>
-          {product.description}
-        </Typography>
-      </div>
-    </Box>
+      </Box>
+
+      <Modal open={open} onClose={handleClose} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%',
+        overflow: 'auto', backgroundColor: 'rgba(0, 0, 0, 0.5)', position: 'fixed', top: 0, left: 0, zIndex: 99,}}>
+        <div style={{ backgroundColor: '#fff', padding: '20px', borderRadius: '5px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.3)', maxWidth: '70%', maxHeight: '90%', overflow: 'auto', boxSizing: 'border-box'}}>
+          {<ReviewForm userId={userId} productId={product.id} onAdd={handleCloseAddReview}  />}
+        </div>
+      </Modal>
+
+      {review && (
+        <Modal open={openEdit} onClose={handleCloseEdit} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%',
+          overflow: 'auto', backgroundColor: 'rgba(0, 0, 0, 0.5)', position: 'fixed', top: 0, left: 0, zIndex: 99}}>
+            <div style={{ backgroundColor: '#fff', padding: '20px', borderRadius: '5px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.3)', maxWidth: '70%', maxHeight: '90%', overflow: 'auto', boxSizing: 'border-box' }}>
+              <EditReviewForm review={review} onUpdate={handleUpdate} onClose={handleCloseEdit} />
+            </div>
+        </Modal>
+      )}
+    </>
   );
 };

@@ -6,10 +6,12 @@ import {Box, CircularProgress} from '@mui/material';
 import {ProductDetails} from "../components/catalog/ProductDetails";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import {getUserId} from "../api/AuthAPI";
 
 export const ProductDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [product, setProduct] = useState<Product | null>(null);
+  const [userId, setUserId] = useState<number>(0);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -42,27 +44,30 @@ export const ProductDetailsPage: React.FC = () => {
       });
     };
 
-    fetchProduct();
+    fetchProduct().catch(() => {});
+    fetchUserId().catch(() => {});
   }, [id]);
+
+  const fetchUserId = async () => {
+    const userId = await getUserId();
+    setUserId(userId);
+  }
 
   if (!product) {
     return (
       <>
-
         <Box display="flex" justifyContent="center" alignItems="center" height="100%">
           <CircularProgress />
         </Box>
-
       </>
     );
   }
 
-
   return (
     <>
       <Header title={'GameScape'}></Header>
-      <Box height={'730px'}>
-        <ProductDetails product={product} />;
+      <Box minHeight={'730px'}>
+        <ProductDetails product={product} userId={userId} />
       </Box>
       <Footer></Footer>
     </>
