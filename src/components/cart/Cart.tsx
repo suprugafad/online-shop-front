@@ -78,7 +78,7 @@ const Cart = () => {
     fetchCartItems().catch(() => {});
     setTimeout(() => {
       setLoading(false);
-    }, 500)
+    }, 300);
 
   }, []);
 
