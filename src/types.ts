@@ -111,3 +111,8 @@ export enum PaymentMethod {
   CREDIT_CARD = 'CREDIT_CARD',
   PAYPAL = 'PAYPAL',
 }
+
+export interface IMonthlySales {
+  month: string,
+  total_sales: string
+}
