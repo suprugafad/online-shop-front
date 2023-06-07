@@ -103,6 +103,21 @@ class ProductAPI {
       console.error(err);
     }
   }
+
+  public async getFavoriteProducts(userId: number) {
+    try {
+      const response = await axios.get(`http://localhost:5000/api/favoriteItems/user/${userId}`);
+
+      return response.data.map((product: any) => ({
+        id: product.productId,
+        title: product.title,
+        price: product.price + '$',
+        mainImage: product.mainImage,
+      }));
+    } catch (error) {
+      console.error(error);
+    }
+  }
 }
 
 const productAPI = new ProductAPI();
