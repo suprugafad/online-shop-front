@@ -37,20 +37,14 @@ const Checkout: React.FC<CheckoutProps> = ({selectedCartItems, totalPrice}) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    async function fetchData() {
-      try {
-        const userId = await getUserId();
-        const data = await orderAPI.fetchAddresses(userId);
-
-        setAddresses(data);
-      } catch (error) {
-        console.error(error);
-      }
-    }
-
-    fetchData().catch(() => {
-    });
+    fetchAddresses().catch(() => {});
   }, []);
+
+  const fetchAddresses = async () => {
+    const userId = await getUserId();
+    const addresses = await orderAPI.fetchAddresses(userId);
+    setAddresses(addresses);
+  }
 
   const handleCommentChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setComment(event.target.value);
@@ -79,6 +73,8 @@ const Checkout: React.FC<CheckoutProps> = ({selectedCartItems, totalPrice}) => {
     try {
       const userId = await getUserId();
       await orderAPI.createAddress(userId, newAddress);
+      fetchAddresses().catch(() => {})
+      console.log(addresses)
 
       handleClose();
     } catch (err) {
