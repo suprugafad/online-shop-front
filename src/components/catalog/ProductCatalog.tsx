@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import axios from 'axios';
 import {Box, Container, FormControl, Grid, MenuItem, Pagination, Typography, Select, SelectChangeEvent} from '@mui/material';
 import { ProductComponent } from './ProductComponent';
@@ -17,6 +17,8 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ filters}) => {
   const [filterPriceRange, setFilterPriceRange] = useState<number[]>([0, 1000]);
   const [noProductsFound, setNoProductsFound] = useState(false);
   const [sortOption, setSortOption] = useState('no');
+
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   const fetchProducts = useCallback(async (sortOption: string) => {
     try {
@@ -61,7 +63,6 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ filters}) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      // setLoading(true);
       try {
         if (filters.manufacturers.length || filters.categories.length || filters.priceRange[0] !== 0 || filters.priceRange[1] !== 1000) {
           await fetchProductsWithFilter(sortOption);
@@ -70,11 +71,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ filters}) => {
         }
       } catch (error) {
         console.error("Error fetching data:", error);
-      } /*finally {
-        setTimeout(() => {
-          setLoading(false);
-        }, 500)
-      } */
+      }
     };
 
     fetchData().catch(() => {});
@@ -82,6 +79,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ filters}) => {
 
   const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setPage(value);
+    scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   const handleSortChange = (event: SelectChangeEvent<string>) => {
@@ -95,7 +93,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ filters}) => {
   }, [filters.priceRange]);
 
   return (
-    <Box sx={{width: '100%', marginTop:'50px'}}>
+    <Box sx={{width: '100%', marginTop:'50px'}} ref={scrollRef}>
       <Container maxWidth="lg">
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 2, marginRight:'80px' }}>
           <FormControl variant="outlined" size="small">
