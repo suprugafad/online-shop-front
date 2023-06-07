@@ -18,6 +18,7 @@ import OrdersPage from "./pages/OrdersPage";
 import ShopPage from "./pages/AboutShopPage";
 import PaymentPage from "./pages/PaymentPage";
 import AdminDashboardPage from "./pages/AdminDashboardPage";
+import FavoritePage from "./pages/FavoritePage";
 
 function App() {
   return (
@@ -41,6 +42,7 @@ function App() {
         <Route path='/aboutShop' element={<ShopPage />}/>
         <Route path='/payment' element={<PaymentPage />}/>
         <Route path='/statistics' element={<AdminDashboardPage />}/>
+        <Route path='/favorite' element={<FavoritePage />}/>
       </Routes>
     </Router>
   );
