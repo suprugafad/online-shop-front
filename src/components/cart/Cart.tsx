@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
   Grid, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button,
-  DialogTitle, DialogContent, DialogContentText, DialogActions, Dialog, Checkbox, Box, Snackbar, Alert
+  DialogTitle, DialogContent, DialogContentText, DialogActions, Dialog, Checkbox, Box, Snackbar, Alert, CircularProgress
 } from "@mui/material";
 import { ICartItem } from "../../types";
 import CartItem from "./CartItem";
@@ -17,6 +17,7 @@ const Cart = () => {
   const [open, setOpen] = useState(false);
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -74,8 +75,11 @@ const Cart = () => {
   }
 
   useEffect(() => {
-    fetchCartItems().catch(() => {
-    });
+    fetchCartItems().catch(() => {});
+    setTimeout(() => {
+      setLoading(false);
+    }, 500)
+
   }, []);
 
   const removeFromCartHandler = async (itemId: number) => {
@@ -145,6 +149,16 @@ const Cart = () => {
     }
   }
 
+  if (loading) {
+    return (
+      <>
+        <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
+          <CircularProgress />
+        </Box>
+      </>
+    )
+  }
+
   if (cartItems.length === 0) {
     return (
       <Box minHeight='650px' display='flex' alignItems='center' justifyContent='center'>
@@ -159,6 +173,9 @@ const Cart = () => {
   return (
     <Grid container spacing={2} minHeight='630px' style={{display: 'flex', justifyContent: 'right', marginTop: '10px'}}>
       <Grid item xs={12}>
+        <Grid item xs={12} style={{textAlign: 'center', marginBottom: '20px'}}>
+          <Typography variant="h4">Cart</Typography>
+        </Grid>
         <TableContainer component={Paper}>
           <Table>
             <TableHead>
