@@ -20,6 +20,7 @@ import {
   deleteIconButton, input, mainImageStyle,
   textField
 } from "../../../styles/addProductFormStyles";
+import productAPI from "../../../api/ProductAPI";
 
 const styles = {
   inputFile: {
@@ -63,9 +64,10 @@ interface UpdateProductFormProps {
 
 const UpdateProductForm: React.FC<UpdateProductFormProps> = ({ product, onUpdate }) => {
   const [title, setTitle] = useState<string>(product.title);
+  const [manufacturer, setManufacturer] = useState<string>(product.manufacturer || '');
   const [description, setDescription] = useState<string>(product.description);
   const [price, setPrice] = useState<number>(product.price);
-  const [amount, setAmount] = useState<number>(0);
+  const [amount, setAmount] = useState<number>(product.amount || 0);
   const [mainImage, setMainImage] = useState<string>('');
   const [additionalImages, setAdditionalImages] = useState<string[]>([]);
   const [mainImageUrl, setMainImageUrl] = useState<string>(`http://localhost:5000/assets/images/products/${product.title}/${product.mainImage}`);
@@ -77,27 +79,13 @@ const UpdateProductForm: React.FC<UpdateProductFormProps> = ({ product, onUpdate
     setMainImageUrl(`http://localhost:5000/assets/images/products/${product.title}/${product.mainImage}`);
     setAdditionalImages(product.additionalImages ?
       product.additionalImages.map(img => `http://localhost:5000/assets/images/products/${product.title}/${img}`) : []);
-    fetchCategories();
-    fetchProductCategories(product.id);
+    fetchCategories().catch(() => {});
+    fetchProductCategories(product.id).catch(() => {});
   }, [product]);
 
   const fetchCategories = async () => {
-    try {
-      const response = await axios.get("http://localhost:5000/api/categories");
-      let categories: [] = [];
-
-      if (response && response.data) {
-        categories = response.data.map((category: any) => ({
-            id: category._id,
-            name: category._name
-          }
-        ));
-      }
-
-      setAllCategories(categories);
-    } catch (error) {
-      console.error(error);
-    }
+    const categories = await productAPI.getAllCategories();
+    setAllCategories(categories);
   };
 
   const fetchProductCategories = async (productId: number) => {
@@ -105,7 +93,6 @@ const UpdateProductForm: React.FC<UpdateProductFormProps> = ({ product, onUpdate
       const response = await axios.get(`http://localhost:5000/api/productCategories/product_id/${productId}`);
 
       if (response && response.data) {
-        console.log(response.data)
         const productCategories = response.data.map((category: any) => category._categoryId);
         setInitialCategories(productCategories || [])
         setSelectedCategories(productCategories);
@@ -138,6 +125,10 @@ const UpdateProductForm: React.FC<UpdateProductFormProps> = ({ product, onUpdate
 
   const handleAmountChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setAmount(parseInt(event.target.value));
+  };
+
+  const handleManufacturerChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setManufacturer(event.target.value);
   };
 
   const handleMainImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -184,18 +175,7 @@ const UpdateProductForm: React.FC<UpdateProductFormProps> = ({ product, onUpdate
   };
 
   const addProductCategory = async (productId: number, categoryId: number) => {
-    try {
-      await axios.post(
-        "http://localhost:5000/api/productCategories",
-        { productId: productId, categoryId: categoryId },
-        {
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-    } catch (error) {
-      console.error(error);
-      throw new Error("Unable to add product category");
-    }
+    await productAPI.addProductCategory(productId, categoryId);
   };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -204,6 +184,7 @@ const UpdateProductForm: React.FC<UpdateProductFormProps> = ({ product, onUpdate
     const updatedProduct = {
       id: product.id,
       title,
+      manufacturer,
       description,
       price,
       amount,
@@ -225,11 +206,18 @@ const UpdateProductForm: React.FC<UpdateProductFormProps> = ({ product, onUpdate
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} style={{width: '500px'}}>
       <TextField
         label="Title"
         value={title}
         onChange={handleTitleChange}
+        fullWidth
+        sx={textField}
+      />
+      <TextField
+        label="Manufacturer"
+        value={manufacturer}
+        onChange={handleManufacturerChange}
         fullWidth
         sx={textField}
       />
