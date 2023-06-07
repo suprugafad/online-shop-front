@@ -65,7 +65,7 @@ const UserTable: React.FC<UserTableProps> = ({usersTable, handleDeleteTable, han
   };
 
   return (
-    <div style={{width: '70%'}}>
+    <div style={{width: '70%', minHeight: '630px'}}>
       {isLoading && (
         <Grid style={{
           width: '100%',

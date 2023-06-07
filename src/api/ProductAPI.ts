@@ -43,6 +43,21 @@ class ProductAPI {
     }
   }
 
+  public async addProductCategory(productId: number, categoryId: number) {
+    try {
+      await axios.post(
+        "http://localhost:5000/api/productCategories",
+        { productId: productId, categoryId: categoryId },
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    } catch (error) {
+      console.error(error);
+      throw new Error("Unable to add product category");
+    }
+  }
+
   public async addToCart(productId: number) {
     try {
       const userData = await axios.get('http://localhost:5000/api/auth/userId', { withCredentials: true });
@@ -56,6 +71,36 @@ class ProductAPI {
 
     } catch (error) {
       console.error(error);
+    }
+  }
+
+  public async isFavoriteItem(userId: number, productId: number) {
+    try {
+      const response = await axios.get(`http://localhost:5000/api/favoriteItems/user/${userId}/product/${productId}`);
+
+      return response.data.isFavorite;
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  public async addFavoriteItem(userId: number, productId: number) {
+    try {
+      const response = await axios.post(`http://localhost:5000/api/favoriteItems`, {userId, productId});
+
+      return response.data.isFavorite;
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  public async deleteFavoriteItem(userId: number, productId: number) {
+    try {
+      const response = await axios.delete(`http://localhost:5000/api/favoriteItems/user/${userId}/product/${productId}`);
+
+      return response.data.isFavorite;
+    } catch (err) {
+      console.error(err);
     }
   }
 }

@@ -3,8 +3,6 @@ import axios from "axios";
 import { IUser } from "../types";
 import UsersTable from "../components/admin/users/UsersTable";
 import HeaderAdmin from "../components/admin/HeaderAdmin";
-import Footer from "../components/Footer";
-
 
 const UsersPage: React.FC = () => {
   const [users, setUsers] = useState<IUser[]>([]);
@@ -77,7 +75,6 @@ const UsersPage: React.FC = () => {
           handleUpdateTable={handleUpdate}
         />
       </div>
-      <Footer></Footer>
     </div>
   );
 };

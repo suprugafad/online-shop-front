@@ -62,7 +62,7 @@ const OrderTable: React.FC<OrderTableProps> = ({ ordersTable, handleUpdateTable,
   const filteredOrders = filterStatus ? orders.filter((order) => order.status === filterStatus.toLowerCase()) : orders;
 
   return (
-    <div style={{ width: '70%' }}>
+    <div style={{ width: '70%', minHeight: '630px' }}>
       {isLoading && (
         <Grid
           style={{

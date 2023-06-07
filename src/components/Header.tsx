@@ -93,6 +93,9 @@ const Header: React.FC<HeaderProps> = ({title}) => {
           {isAuthenticated && (
             <>
               <Button color="inherit" onClick={handleProfile}>Profile</Button>
+              <Button component={Link} to="/favorite" color="inherit">
+                Favorite
+              </Button>
               <Button component={Link} to="/cart" color="inherit">
                 Cart
               </Button>

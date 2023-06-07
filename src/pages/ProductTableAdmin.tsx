@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from "react";
-import ProductTable from "../components/admin/ProductTable";
+import ProductTable from "../components/admin/products/ProductTable";
 import axios from "axios";
 import { Product, Category } from "../types";
 import { Button } from "@mui/material";
 import { Link } from "react-router-dom";
 import HeaderAdmin from "../components/admin/HeaderAdmin";
-import Footer from "../components/Footer";
-
 
 const ProductPage: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -28,8 +26,10 @@ const ProductPage: React.FC = () => {
         return {
           id: product._id,
           title: product._title,
+          manufacturer: product._manufacturer,
           description: product._description,
           price: product._price,
+          amount: product._amount,
           mainImage: product._mainImage,
           additionalImages: product._additionalImages,
           categories: categories,
@@ -98,7 +98,6 @@ const ProductPage: React.FC = () => {
           handleUpdateTable={handleUpdate}
         />
       </div>
-      <Footer></Footer>
     </div>
   );
 };

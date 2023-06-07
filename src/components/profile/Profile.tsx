@@ -35,13 +35,13 @@ export const Profile: React.FC<ProfileProps> = ({user}) => {
 
   return (
     <Container style={{width: '70%'}}>
-      <h1 style={{textAlign: 'center'}}>Profile</h1>
-      <Box style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+      <h1 style={{textAlign: 'center', marginTop: '60px'}}>Profile</h1>
+      <Box style={{display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '40px'}}>
         <UserProfile user={currentUser} onUserUpdate={handleUserUpdate}/>
       </Box>
-      <Typography sx={{textAlign: 'center', marginTop: '30px', fontSize: '20px'}}>Order history <em
+      <Typography sx={{textAlign: 'center', marginTop: '50px', fontSize: '20px'}}>Order history <em
         style={{fontSize: '15px'}}>(for last 6 month)</em></Typography>
-      <Box style={{width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+      <Box style={{minHeight: '390px', width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '30px'}}>
         <OrderHistory orders={orders}/>
       </Box>
     </Container>

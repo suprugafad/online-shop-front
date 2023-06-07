@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import {IOrderTable} from "../types";
 import HeaderAdmin from "../components/admin/HeaderAdmin";
-import Footer from "../components/Footer";
 import OrdersTable from "../components/admin/orders/OrdersTable";
 
 const OrdersPage: React.FC = () => {
@@ -65,18 +64,9 @@ const OrdersPage: React.FC = () => {
     <div >
       <HeaderAdmin title="GameScape"/>
       <h1 style={{textAlign: "center"}}>Orders</h1>
-      <div style={{display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        width: '100%',
-        height: '100%',
-        marginBottom: '80px'}}>
-        <OrdersTable
-          ordersTable={orders}
-          handleUpdateTable={handleUpdate}
-        />
+      <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', marginBottom: '80px'}}>
+        <OrdersTable ordersTable={orders} handleUpdateTable={handleUpdate}/>
       </div>
-      <Footer></Footer>
     </div>
   );
 };

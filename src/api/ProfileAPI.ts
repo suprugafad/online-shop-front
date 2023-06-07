@@ -45,6 +45,7 @@ class ProfileAPI {
     try {
       const response = await axios.get(`http://localhost:5000/api/users/${userId}`, {withCredentials: true});
       const user = response.data;
+
       return {
         id: user._id,
         username: user._username,

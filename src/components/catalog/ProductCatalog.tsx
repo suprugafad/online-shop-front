@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import axios from 'axios';
-import {Box, CircularProgress, Container, FormControl, Grid, MenuItem, Pagination, Typography, Select, SelectChangeEvent} from '@mui/material';
+import {Box, Container, FormControl, Grid, MenuItem, Pagination, Typography, Select, SelectChangeEvent} from '@mui/material';
 import { ProductComponent } from './ProductComponent';
 import { Product, Filters } from '../../types';
 
@@ -17,7 +17,6 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ filters}) => {
   const [filterPriceRange, setFilterPriceRange] = useState<number[]>([0, 1000]);
   const [noProductsFound, setNoProductsFound] = useState(false);
   const [sortOption, setSortOption] = useState('no');
-  // const [loading, setLoading] = useState(false);
 
   const fetchProducts = useCallback(async (sortOption: string) => {
     try {
@@ -94,16 +93,6 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ filters}) => {
   useEffect(() => {
     setFilterPriceRange(filters.priceRange);
   }, [filters.priceRange]);
-
-  // if (loading) {
-  //   return (
-  //     <>
-  //       <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
-  //         <CircularProgress />
-  //       </Box>
-  //     </>
-  //   );
-  // }
 
   return (
     <Box sx={{width: '100%', marginTop:'50px'}}>

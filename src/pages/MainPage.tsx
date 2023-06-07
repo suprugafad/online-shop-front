@@ -227,8 +227,8 @@ const MainPage: React.FC = () => {
       {isAdmin && (
         <>
           <HeaderAdmin title="GameScape"/>
-          <Container maxWidth="lg" style={{marginTop: '80px', marginBottom: '400px'}}>
-            <Typography variant="h4" component="h1" align="center" gutterBottom marginBottom='40px'>
+          <Container maxWidth="lg" style={{marginTop: '80px', marginBottom: '400px', minHeight: '320px'}}>
+            <Typography variant="h3" component="h1" align="center" gutterBottom marginBottom='40px'>
               Admin panel
             </Typography>
             <Divider/>

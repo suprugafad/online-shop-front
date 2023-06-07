@@ -23,7 +23,7 @@ interface ProductFiltersProps {
 export const ProductFilters: React.FC<ProductFiltersProps> = ({ filters, onFilterChange }) => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedManufacturers, setSelectedManufacturers] = useState<string[]>([]);
-  const [priceRange, setPriceRange] = useState<number[]>([0, 1000]);
+  const [priceRange, setPriceRange] = useState<number[]>([0, 200]);
   const [allCategories, setAllCategories] = useState<any[]>([]);
   const [allManufacturers, setAllManufacturers] = useState<any[]>([]);
 
@@ -139,7 +139,7 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({ filters, onFilte
           valueLabelDisplay="auto"
           aria-labelledby="range-slider"
           min={0}
-          max={1000}
+          max={200}
         />
         <Box display="flex" justifyContent="space-between">
           <TextField label="Min cost" value={priceRange[0]} type="number" InputProps={{ inputProps: { min: 0, max: 1000 } }} />

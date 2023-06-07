@@ -14,7 +14,6 @@ const StartPage = () => {
     async function fetchData() {
       try {
         const response = await checkAuthentication();
-        console.log(response?.data.role)
 
         if (response && response.data.role === 'admin') {
           setIsAdmin(true);
