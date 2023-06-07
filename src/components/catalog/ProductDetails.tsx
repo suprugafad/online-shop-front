@@ -30,16 +30,19 @@ export const ProductDetails: React.FC<ProductDetailsProps> = ({ product, userId 
   const [isFavorite, setIsFavorite] = useState<boolean>(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-
   useEffect(() => {
     fetchAuth().catch(() => {});
+  }, []);
+
+  useEffect(() => {
     fetchProductCategories().catch(() => {});
     fetchProductReviews().catch(() => {});
+
     if (isAuthenticated) {
       fetchLeavingComment().catch(() => {});
       fetchIsFavoriteItem().catch(() => {});
     }
-  }, [product.id]);
+  }, [product.id, isAuthenticated]);
 
   const fetchAuth = async () => {
     const response = await checkAuthentication();
@@ -85,7 +88,7 @@ export const ProductDetails: React.FC<ProductDetailsProps> = ({ product, userId 
 
   const fetchIsFavoriteItem = async () => {
     const isFavoriteItem = await productAPI.isFavoriteItem(userId, product.id);
-
+    console.log(isFavoriteItem)
     setIsFavorite(isFavoriteItem);
   }
 
