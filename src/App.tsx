@@ -17,6 +17,7 @@ import UsersPage from "./pages/UsersPage";
 import OrdersPage from "./pages/OrdersPage";
 import ShopPage from "./pages/AboutShopPage";
 import PaymentPage from "./pages/PaymentPage";
+import AdminDashboardPage from "./pages/AdminDashboardPage";
 
 function App() {
   return (
@@ -39,6 +40,7 @@ function App() {
         <Route path='/resetPassword/:id/:resetToken' element={<ResetPasswordPage />}/>
         <Route path='/aboutShop' element={<ShopPage />}/>
         <Route path='/payment' element={<PaymentPage />}/>
+        <Route path='/statistics' element={<AdminDashboardPage />}/>
       </Routes>
     </Router>
   );
