@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import {Button, Typography, Box, Divider, Modal} from '@mui/material';
-import {NavigateBefore, NavigateNext} from '@mui/icons-material';
+import {Button, Typography, Box, Divider, Modal, Checkbox} from '@mui/material';
+import {Favorite, FavoriteBorder, NavigateBefore, NavigateNext} from '@mui/icons-material';
 import {Product, Category, IReview} from '../../types';
 import {Rating} from "@mui/material";
 import ReviewForm from "../reviews/ReviewForm";
 import reviewApi from "../../api/ReviewApi";
 import EditReviewForm from "../reviews/UpdateReviewForm";
 import productAPI from "../../api/ProductAPI";
+import {checkAuthentication} from "../../api/AuthAPI";
+
+const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
 type ProductDetailsProps = {
   product: Product;
@@ -24,12 +27,27 @@ export const ProductDetails: React.FC<ProductDetailsProps> = ({ product, userId 
   const [availableToLeave, setAvailableToLeave] = useState<boolean>(false);
   const [review, setReview] = useState<IReview | null>(null);
   const [availableToEdit, setAvailableToEdit] = useState<boolean>(false);
+  const [isFavorite, setIsFavorite] = useState<boolean>(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
 
   useEffect(() => {
+    fetchAuth().catch(() => {});
     fetchProductCategories().catch(() => {});
     fetchProductReviews().catch(() => {});
-    fetchLeavingComment().catch(() => {});
+    if (isAuthenticated) {
+      fetchLeavingComment().catch(() => {});
+      fetchIsFavoriteItem().catch(() => {});
+    }
   }, [product.id]);
+
+  const fetchAuth = async () => {
+    const response = await checkAuthentication();
+
+    if (response && response.data.isAuthenticated) {
+      setIsAuthenticated(true);
+    }
+  }
 
   const fetchLeavingComment = async () => {
     try {
@@ -64,6 +82,12 @@ export const ProductDetails: React.FC<ProductDetailsProps> = ({ product, userId 
     const reviews = await reviewApi.getProductReviews(product.id);
     setReviews(reviews);
   };
+
+  const fetchIsFavoriteItem = async () => {
+    const isFavoriteItem = await productAPI.isFavoriteItem(userId, product.id);
+
+    setIsFavorite(isFavoriteItem);
+  }
 
   const handlePrevImage = () => {
     setActiveImageIndex((prevIndex) => (prevIndex > 0 ? prevIndex - 1 : product.additionalImages.length));
@@ -119,6 +143,18 @@ export const ProductDetails: React.FC<ProductDetailsProps> = ({ product, userId 
     fetchProductReviews().catch(() => {});
     fetchLeavingComment().catch(() => {});
   }
+
+  const handleFavoriteItem = async () => {
+
+    if (isFavorite) {
+      await productAPI.deleteFavoriteItem(userId, product.id);
+    } else {
+      await productAPI.addFavoriteItem(userId, product.id);
+    }
+    console.log(isFavorite)
+
+    setIsFavorite(!isFavorite);
+  };
 
   const renderReviews = () => {
     if (!reviews || reviews.length === 0) {
@@ -199,10 +235,15 @@ export const ProductDetails: React.FC<ProductDetailsProps> = ({ product, userId 
             {renderThumbnails()}
           </div>
           <div style={{ flex: '0 0 50%' }}>
-            <Typography gutterBottom variant="h5" component="div">
-              {product.title}
-            </Typography>
-            <Divider/>
+            <Box style={{display: 'flex', alignItems: 'center'}}>
+              <Typography gutterBottom variant="h5" component="div">
+                {product.title}
+              </Typography>
+              {isAuthenticated && (
+                <Checkbox {...label} icon={<FavoriteBorder />} checkedIcon={<Favorite />} onClick={handleFavoriteItem} checked={isFavorite} style={{marginBottom: '0.35em', marginLeft: '1em'}}/>
+                )}
+            </Box>
+              <Divider/>
             <Box mt={2}>
               <Typography variant="h6" color="text.primary">
                 ${product.price.toFixed(2)}
@@ -219,11 +260,13 @@ export const ProductDetails: React.FC<ProductDetailsProps> = ({ product, userId 
                 {productCategories.map((category) => category.name).join(', ')}
               </Typography>
             </Box>
+            {isAuthenticated && (
             <Box mt={2}>
               <Button variant="contained" color="primary" disabled={!isAvailable} onClick={handleAddToCart}>
                 Add to cart
               </Button>
             </Box>
+              )}
             <Divider style={{marginTop: '15px'}}/>
             <Typography variant="body1" color="text.secondary" style={{marginTop: '20px', textAlign:'justify'}}>
               {product.description}
@@ -235,7 +278,8 @@ export const ProductDetails: React.FC<ProductDetailsProps> = ({ product, userId 
             <Typography gutterBottom variant="h5" component="div">
               Reviews
             </Typography>
-            <Box >
+            {isAuthenticated && (
+            <Box>
               <Button variant="contained" color="primary" disabled={!availableToLeave} onClick={handleOpen} style={{marginRight: '30px'}}>
                 Leave review
               </Button>
@@ -243,6 +287,7 @@ export const ProductDetails: React.FC<ProductDetailsProps> = ({ product, userId 
                 Edit review
               </Button>
             </Box>
+              )}
           </Box>
           <Divider></Divider>
           {renderReviews()}
