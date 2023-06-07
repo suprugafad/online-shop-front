@@ -8,6 +8,7 @@ import FormInput from '../components/FormInput';
 // import { ReactComponent as GoogleLogo } from ".//frontend/src/assets/google.svg";
 import { LinkItem, OauthMuiLink } from './SignIn';
 import axios from "axios";
+import {useNavigate} from "react-router-dom";
 
 const signupSchema = object({
   username: string().min(1, 'Name is required').max(70),
@@ -37,13 +38,15 @@ const SignUpPage: FC = () => {
     defaultValues,
   });
 
+  const navigate = useNavigate();
+
   const onSubmitHandler: SubmitHandler<ISignUp> = async (values: ISignUp) => {
     try {
       await axios.post('http://localhost:5000/api/auth/register', values, { withCredentials: true });
-      console.log('User was created successfully');
+
+      navigate('/');
     } catch (error) {
       console.error(error);
-      console.log('Error creating user');
       if ((error as any).response && (error as any).response.data === 'User with this email already exists') {
         methods.setError('email', {
           type: 'manual',
