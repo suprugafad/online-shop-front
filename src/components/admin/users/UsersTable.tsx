@@ -106,20 +106,20 @@ const UserTable: React.FC<UserTableProps> = ({usersTable, handleDeleteTable, han
                       Orders
                     </Button>
                     <Button
-                      variant="contained"
+                      variant="outlined"
                       color="primary"
                       onClick={() => handleOpen(user)}
                       style={{marginRight: '0.5rem'}}
                     >
                       Edit
                     </Button>
-                    <Button
-                      variant="outlined"
-                      color="secondary"
-                      onClick={() => handleDelete(user.id)}
-                    >
-                      Delete
-                    </Button>
+                    {/*<Button*/}
+                    {/*  variant="outlined"*/}
+                    {/*  color="secondary"*/}
+                    {/*  onClick={() => handleDelete(user.id)}*/}
+                    {/*>*/}
+                    {/*  Delete*/}
+                    {/*</Button>*/}
                   </TableCell>
                 </TableRow>
               ))}

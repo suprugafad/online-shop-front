@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Card, CardActionArea, CardContent, CardMedia, Typography } from '@mui/material';
+import {Box, Card, CardActionArea, CardContent, CardMedia, Divider, Typography} from '@mui/material';
 import styled from '@emotion/styled';
 import { useNavigate } from "react-router-dom";
 import { ProductCard } from "../../types";
@@ -22,7 +22,7 @@ export const ProductComponent: React.FC<ProductCard> = ({id, title, price, mainI
 
   return (
     <Box>
-      <StyledCard sx={{width: 300}}>
+      <StyledCard sx={{width: 300, marginTop: '10px'}}>
         <CardActionArea onClick={handleClick}>
           <CardMedia
             component="img"

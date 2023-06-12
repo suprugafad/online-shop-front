@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { IOrder } from "../../types";
-import { Card, CardContent, Typography, Button } from "@mui/material";
+import { Card, CardContent, Typography } from "@mui/material";
 import { OrderDetails } from "./OrderDetails";
 
 interface OrderCardProps {

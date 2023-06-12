@@ -98,8 +98,8 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({ filters, onFilte
   };
 
   return (
-    <Box style={{ width: '320px', padding: '20px', border: '1px solid #7E52A0', backgroundColor: '#f7f3fa', borderRadius: '10px'}}>
-      <Box my={2} marginTop={'0'}>
+    <Box style={{ width: '320px', padding: '20px', border: '1px solid #7E52A0', backgroundColor: '#f7f3fa', borderRadius: '10px', minHeight: '100vh'}}>
+      <Box my={2} marginTop={'0'} minHeight='40vh'>
         <FormControl component="fieldset">
           <FormLabel component="legend" style={{fontSize: '20px', marginBottom:'10px'}}>Categories</FormLabel>
           <FormGroup>
@@ -114,7 +114,7 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({ filters, onFilte
         </FormControl>
       </Box>
       <Divider />
-      <Box my={2}>
+      <Box my={2} minHeight='40vh'>
         <FormControl component="fieldset">
           <FormLabel component="legend" style={{fontSize: '20px', marginBottom:'10px'}}>Manufactures</FormLabel>
           <FormGroup>

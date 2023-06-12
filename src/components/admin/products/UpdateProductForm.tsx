@@ -206,7 +206,7 @@ const UpdateProductForm: React.FC<UpdateProductFormProps> = ({ product, onUpdate
   };
 
   return (
-    <form onSubmit={handleSubmit} style={{width: '500px'}}>
+    <form onSubmit={handleSubmit} style={{width: '700px'}}>
       <TextField
         label="Title"
         value={title}
@@ -226,6 +226,7 @@ const UpdateProductForm: React.FC<UpdateProductFormProps> = ({ product, onUpdate
         value={description}
         onChange={handleDescriptionChange}
         fullWidth
+        multiline
         sx={textField}
         autoComplete="off"
       />
@@ -272,7 +273,7 @@ const UpdateProductForm: React.FC<UpdateProductFormProps> = ({ product, onUpdate
         </label>
       </Box>
       {mainImageUrl && (
-        <Box style={{width: '150px', display:'flex', alignItems: 'center', justifyContent: 'center', marginTop: '10px'}}>
+        <Box style={{width: '150px', height: '150px', objectFit: 'contain', display:'flex', alignItems: 'center', justifyContent: 'center', marginTop: '10px'}}>
           <Box component="img" src={mainImageUrl} alt="Main Image" sx={mainImageStyle} style={{marginLeft: '10px', maxWidth: '100px', objectFit: 'contain',}}/>
         </Box>
       )}

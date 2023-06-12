@@ -5,6 +5,7 @@ import {FavoriteProducts} from "../components/FavoriteProducts";
 import productAPI from "../api/ProductAPI";
 import {getUserId} from "../api/AuthAPI";
 import {Box} from "@mui/material";
+import Footer from "../components/Footer";
 
 const FavoritePage: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -42,13 +43,16 @@ const FavoritePage: React.FC = () => {
           justifyContent: 'center',
           width: '80%',
           height: '100%',
-          marginBottom: '80px'}}>
+          marginBottom: '80px',
+          minHeight: '640px'
+        }}>
           <FavoriteProducts
             products={products}
             userId={userId}
           />
         </Box>
       </Box>
+      <Footer></Footer>
     </>
   );
 };

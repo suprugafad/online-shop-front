@@ -169,7 +169,7 @@ export const ProductDetails: React.FC<ProductDetailsProps> = ({ product, userId 
         <Rating value={review.rating} readOnly />
         <Box style={{display: "flex", justifyContent: 'space-between'}}>
           <Typography variant="body1" color="text.secondary">User #{review.userId}</Typography>
-          <Typography variant="body1" color="text.secondary">01.10.1001</Typography>
+          <Typography variant="body1" color="text.secondary">{review.createdAt}</Typography>
         </Box>
         <Divider/>
         <Typography variant="body1" color="text.primary" style={{marginTop: '10px'}}>{review.comment}</Typography>

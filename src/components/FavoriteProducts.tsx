@@ -72,7 +72,6 @@ export const FavoriteProducts: React.FC<FavoriteProductsProps> = ({ products, us
         width: "80%",
         flexDirection: "row",
         flexWrap: "wrap",
-        justifyContent: "space-between",
         marginTop: "20px",
       }}
     >
@@ -82,7 +81,7 @@ export const FavoriteProducts: React.FC<FavoriteProductsProps> = ({ products, us
              marginBottom: 2,
              position: "relative",
 
-             marginRight: index % 3 === 2 ? 0 : "8px",
+             marginRight: index % 3 === 2 ? 0 : "120px",
            }}
         >
           <ProductComponent

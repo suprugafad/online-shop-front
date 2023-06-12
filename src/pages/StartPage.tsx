@@ -5,6 +5,7 @@ import Footer from "../components/Footer";
 import {ProductFilters} from "../components/catalog/ProductFilters";
 import {Filters} from "../types";
 import {checkAuthentication} from "../api/AuthAPI";
+import {Box} from "@mui/material";
 
 const StartPage = () => {
   const [filter, setFilter] = useState<Filters>({categories: [], manufacturers: [], priceRange: [0, 1000]});
@@ -34,6 +35,7 @@ const StartPage = () => {
 
   return (
     <>
+      <Box minHeight='100vh'>
       {!isAdmin && (
         <>
           <Header title="GameScape"/>
@@ -43,7 +45,6 @@ const StartPage = () => {
             width: '100%',
             height: '100%',
           }}>
-
             <div style={{marginLeft: "5rem", width: '330px', marginTop: '3rem'}}>
               <ProductFilters
                 filters={{
@@ -58,7 +59,7 @@ const StartPage = () => {
           </div>
         </>
       )}
-
+      </Box>
       <Footer/>
     </>
   );

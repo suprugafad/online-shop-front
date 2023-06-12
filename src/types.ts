@@ -90,6 +90,7 @@ export interface IReview {
   productId: number;
   comment: string;
   rating: number;
+  createdAt: string;
 }
 
 export enum OrderStatus {

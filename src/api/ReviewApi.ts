@@ -12,14 +12,25 @@ class ReviewApi {
   public async getProductReviews(productId: number) {
     try {
       const response = await axios.get(`http://localhost:5000/api/reviews/product_id/${productId}`);
-      return response.data.map((review: any) => (
-        {
+      return response.data.map((review: any) => {
+        const timestamp = Date.parse(review._createdAt);
+        const date = new Date(timestamp);
+        const formattedDate = date.toLocaleDateString('en', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          }
+        );
+
+        return {
           id: review._id,
           comment: review._comment,
           rating: review._rating,
           productId: review._productId,
           userId: review._userId,
-        }));
+          createdAt: formattedDate,
+        }
+      });
     } catch (error) {
       console.error(error);
     }
@@ -46,12 +57,22 @@ class ReviewApi {
       const response = await axios.get(`http://localhost:5000/api/reviews/product/${productId}/user/${userId}`);
       const review = response.data;
 
+      const timestamp = Date.parse(review._createdAt);
+      const date = new Date(timestamp);
+      const formattedDate = date.toLocaleDateString('en', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        }
+      );
+
       return {
         id: review._id,
         comment: review._comment,
         rating: review._rating,
         productId: review._productId,
         userId: review._userId,
+        createdAt: formattedDate,
       };
     } catch (error) {
       console.error(error);
